@@ -1,0 +1,259 @@
+/* ============================================
+   AB NUTRITION - Design System
+   Light / Dark mode via prefers-color-scheme
+   ============================================ */
+
+/* Brand accent (same in both modes) */
+:root {
+  --brand-primary: #E60000;
+  --brand-primary-hover: #CC0000;
+  --brand-primary-disabled: #8C4A4A; /* muted red for disabled state */
+}
+
+/* Light Mode */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-main: #FAFAFA;
+    --background-secondary: #FFFFFF;
+    --text-primary: #1A1A1A;
+    --text-secondary: #666666;
+    --border-color: #E5E5E5;
+  }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-main: #121212;
+    --background-secondary: #2C2C2C;
+    --text-primary: #F5F5F5;
+    --text-secondary: #B3B3B3;
+    --border-color: #333333;
+  }
+}
+
+/* Base: apply semantic tokens to body when using utility classes */
+body {
+  background-color: var(--background-main);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   Premium CTA: COMPONI PASTO (Apple-style)
+   ============================================ */
+.btn-componi-pasto {
+  --brand-top: #FF3333;   /* ~10% brighter than brand red for top light */
+  background: linear-gradient(to bottom, var(--brand-top) 0%, var(--brand-primary) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 8px 24px rgba(0, 0, 0, 0.22),
+    0 2px 8px rgba(230, 0, 0, 0.12);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-componi-pasto:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #FF4040 0%, var(--brand-primary-hover) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 12px 28px rgba(0, 0, 0, 0.28),
+    0 4px 12px rgba(230, 0, 0, 0.15);
+}
+.btn-componi-pasto:active:not(:disabled) {
+  background: linear-gradient(to bottom, var(--brand-primary) 0%, #B30000 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 2px 6px rgba(0, 0, 0, 0.25),
+    0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.btn-componi-pasto:disabled {
+  background: #6B7280 !important;
+  box-shadow: none !important;
+}
+
+/* Header logo: qualità e visibilità in Light Mode */
+.logo-header {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+@media (prefers-color-scheme: light) {
+  .logo-header {
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.15)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
+  }
+}
+
+/* ============================================
+   Header: brand focus, glassmorphism, nav discreta
+   ============================================ */
+.app-header {
+  background: linear-gradient(to bottom, var(--background-main) 0%, rgba(10, 10, 10, 0.98) 100%);
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+.app-header.is-scrolled {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+@media (prefers-color-scheme: light) {
+  .app-header {
+    background: linear-gradient(to bottom, var(--background-main) 0%, rgba(26, 26, 26, 0.97) 100%);
+  }
+  .app-header.is-scrolled {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+  }
+}
+
+/* Logo semplificato: crop per nascondere tagline (solo AB NUTRITION + DNA) */
+.logo-header-simplified {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+.logo-header-wrap {
+  height: 52px;
+  width: 180px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .logo-header-wrap {
+    height: 60px;
+    width: 240px;
+  }
+}
+@media (prefers-color-scheme: light) {
+  .logo-header-simplified {
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.12)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  }
+}
+
+/* Nav: bordo sottile, più respiro, indicatore attivo elegante */
+.app-header .nav-bar {
+  border-top: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+.nav-tab {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  transition: color 0.2s ease;
+  position: relative;
+}
+.nav-tab:hover {
+  color: var(--brand-primary);
+}
+.nav-tab.is-active {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+.nav-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 4px;
+  width: 55%;
+  height: 2px;
+  background: var(--brand-primary);
+  border-radius: 2px;
+}
+
+/* ============================================
+   Splash Screen
+   ============================================ */
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0A0A0A;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+.splash-screen--out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash-screen__vignette {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    ellipse 85% 85% at 50% 50%,
+    rgba(20, 20, 20, 0.98) 0%,
+    #0A0A0A 45%,
+    #000000 100%
+  );
+  pointer-events: none;
+}
+
+.splash-screen__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.splash-screen__logo-wrap {
+  animation: splash-logo-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+             splash-glow-pulse 0.5s ease-in-out 0.75s forwards;
+  opacity: 0;
+  transform: scale(0.9) translateY(20px);
+  filter: drop-shadow(0 0 20px rgba(230, 0, 0, 0.35))
+          drop-shadow(0 0 45px rgba(230, 0, 0, 0.2))
+          drop-shadow(0 0 70px rgba(230, 0, 0, 0.12));
+}
+.splash-screen--out .splash-screen__logo-wrap {
+  animation: none;
+}
+
+.splash-screen__logo {
+  display: block;
+  height: auto;
+  max-height: min(108px, 27vw);
+  width: auto;
+  max-width: min(420px, 90vw);
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+@keyframes splash-logo-enter {
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes splash-glow-pulse {
+  0% {
+    filter: drop-shadow(0 0 20px rgba(230, 0, 0, 0.35))
+            drop-shadow(0 0 45px rgba(230, 0, 0, 0.2))
+            drop-shadow(0 0 70px rgba(230, 0, 0, 0.12));
+  }
+  50% {
+    filter: drop-shadow(0 0 35px rgba(230, 0, 0, 0.5))
+            drop-shadow(0 0 70px rgba(230, 0, 0, 0.3))
+            drop-shadow(0 0 110px rgba(230, 0, 0, 0.15));
+  }
+  100% {
+    filter: drop-shadow(0 0 22px rgba(230, 0, 0, 0.4))
+            drop-shadow(0 0 50px rgba(230, 0, 0, 0.22))
+            drop-shadow(0 0 80px rgba(230, 0, 0, 0.12));
+  }
+}

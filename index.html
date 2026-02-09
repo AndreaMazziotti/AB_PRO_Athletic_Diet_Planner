@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AB PRO Diet">
-  <meta name="theme-color" content="#4f46e5">
+  <meta name="theme-color" content="#E60000">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2965/2965567.png">
 
@@ -21,6 +21,18 @@
       theme: {
         extend: {
           colors: {
+            /* AB NUTRITION brand */
+            brand: {
+              primary: '#E60000',
+              'primary-hover': '#CC0000',
+              'primary-disabled': 'rgba(140, 74, 74, 0.6)',
+            },
+            /* Semantic surfaces (used via var() in index.css for light/dark) */
+            surface: {
+              main: 'var(--background-main)',
+              secondary: 'var(--background-secondary)',
+            },
+            /* Macro semantics (carbs / prot / fat) - kept for data clarity */
             indigo: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' },
             rose: { 500: '#f43f5e', 600: '#e11d48' },
             amber: { 500: '#f59e0b', 600: '#d97706' },
@@ -63,7 +75,7 @@
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-gray-50 dark:bg-black text-gray-900 dark:text-white transition-colors duration-200">
+<body class="bg-[var(--background-main)] text-[var(--text-primary)] transition-colors duration-200">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

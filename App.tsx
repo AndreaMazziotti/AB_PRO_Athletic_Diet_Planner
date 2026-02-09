@@ -8,8 +8,21 @@ import SetupWizard from './components/SetupWizard';
 import FoodManager from './components/FoodManager';
 import DailyPlanner from './components/DailyPlanner';
 import Diary from './components/Diary';
+import SplashScreen from './components/SplashScreen';
+
+const SPLASH_DURATION_MS = 2000;
+const SPLASH_FADE_OUT_MS = 500;
 
 const App: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashExiting, setSplashExiting] = useState(false);
+
+  useEffect(() => {
+    const t1 = window.setTimeout(() => setSplashExiting(true), SPLASH_DURATION_MS);
+    const t2 = window.setTimeout(() => setShowSplash(false), SPLASH_DURATION_MS + SPLASH_FADE_OUT_MS);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
   // Inizializzazione stato: prova a caricare dal localStorage, altrimenti usa il default
   const [state, setState] = useState<AppState>(() => {
     const saved = loadStateFromLocalStorage();
@@ -133,15 +146,19 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-12 flex flex-col transition-colors">
-      <Header currentTab={currentTab} setTab={setCurrentTab} isConfigured={state.isConfigured} />
+    <>
+      {showSplash && (
+        <SplashScreen exiting={splashExiting} />
+      )}
+      <div className="min-h-screen pb-12 flex flex-col bg-[var(--background-main)] transition-colors">
+        <Header currentTab={currentTab} setTab={setCurrentTab} isConfigured={state.isConfigured} />
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-4 md:py-8">
         {!state.isConfigured ? (
           <div className="space-y-12 py-8 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="text-center space-y-4">
-              <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight">Setup Programma</h2>
-              <p className="text-gray-500 dark:text-gray-400 font-medium max-w-md mx-auto leading-relaxed">Configura i tuoi obiettivi energetici e la distribuzione dei nutrienti per le prossime 5 settimane.</p>
+              <h2 className="text-4xl font-black text-[var(--text-primary)] tracking-tight">Setup Programma</h2>
+              <p className="text-[var(--text-secondary)] font-medium max-w-md mx-auto leading-relaxed">Configura i tuoi obiettivi energetici e la distribuzione dei nutrienti per le prossime 5 settimane.</p>
             </div>
             <SetupWizard
               onComplete={handleSetupComplete}
@@ -171,22 +188,22 @@ const App: React.FC = () => {
               />
             )}
             {currentTab === 'config' && (
-              <div className="max-w-2xl mx-auto space-y-8 bg-white dark:bg-gray-900 p-10 rounded-[2.5rem] border border-gray-200 dark:border-gray-800 shadow-sm transition-colors animate-in fade-in zoom-in-95 duration-300">
+              <div className="max-w-2xl mx-auto space-y-8 bg-[var(--background-secondary)] p-10 rounded-[2.5rem] border border-[var(--border-color)] shadow-sm transition-colors animate-in fade-in zoom-in-95 duration-300">
                 <div className="flex items-center gap-4 mb-4">
                   <span className="text-4xl">⚙️</span>
-                  <h2 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Impostazioni</h2>
+                  <h2 className="text-3xl font-black text-[var(--text-primary)] tracking-tight">Impostazioni</h2>
                 </div>
 
                 <div className="space-y-10">
                   <section className="group">
-                    <h3 className="text-xs font-black uppercase text-gray-400 dark:text-gray-500 tracking-widest mb-4 group-hover:text-indigo-500 transition-colors">Export Dati (Backup)</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Scarica un file JSON con tutta la tua configurazione e lo storico. Utile per non perdere dati o per spostarli su un altro dispositivo.</p>
-                    <button onClick={exportConfig} className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 dark:shadow-none transition-all uppercase tracking-widest text-xs">Esporta JSON</button>
+                    <h3 className="text-xs font-black uppercase text-[var(--text-secondary)] tracking-widest mb-4 group-hover:text-brand-primary transition-colors">Export Dati (Backup)</h3>
+                    <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">Scarica un file JSON con tutta la tua configurazione e lo storico. Utile per non perdere dati o per spostarli su un altro dispositivo.</p>
+                    <button onClick={exportConfig} className="bg-brand-primary text-white px-8 py-4 rounded-2xl font-black hover:bg-brand-primary-hover shadow-xl transition-all uppercase tracking-widest text-xs">Esporta JSON</button>
                   </section>
 
                   <section className="group">
-                    <h3 className="text-xs font-black uppercase text-gray-400 dark:text-gray-500 tracking-widest mb-4 group-hover:text-indigo-500 transition-colors">Import Dati</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Carica un file di backup salvato in precedenza. Attenzione: i dati attuali verranno sovrascritti.</p>
+                    <h3 className="text-xs font-black uppercase text-[var(--text-secondary)] tracking-widest mb-4 group-hover:text-brand-primary transition-colors">Import Dati</h3>
+                    <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">Carica un file di backup salvato in precedenza. Attenzione: i dati attuali verranno sovrascritti.</p>
                     <div className="relative overflow-hidden inline-block">
                       <input
                         type="file"
@@ -194,13 +211,13 @@ const App: React.FC = () => {
                         onChange={importConfig}
                         className="absolute inset-0 opacity-0 cursor-pointer"
                       />
-                      <div className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-black hover:bg-gray-200 dark:hover:bg-gray-700 transition-all uppercase tracking-widest text-xs inline-block">Sfoglia File</div>
+                      <div className="bg-[var(--background-main)] text-[var(--text-primary)] px-8 py-4 rounded-2xl font-black hover:opacity-90 border border-[var(--border-color)] transition-all uppercase tracking-widest text-xs inline-block">Sfoglia File</div>
                     </div>
                   </section>
 
-                  <section className="pt-10 border-t border-gray-100 dark:border-gray-800 group">
+                  <section className="pt-10 border-t border-[var(--border-color)] group">
                     <h3 className="text-xs font-black uppercase text-rose-500 tracking-widest mb-4">Zona Pericolo</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Se vuoi cancellare tutto e ricominciare da zero (nuovo piano 5 settimane), usa questo tasto.</p>
+                    <p className="text-sm text-[var(--text-secondary)] mb-6 leading-relaxed">Se vuoi cancellare tutto e ricominciare da zero (nuovo piano 5 settimane), usa questo tasto.</p>
                     <button onClick={handleReset} className="bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 px-8 py-4 rounded-2xl font-black hover:bg-rose-100 dark:hover:bg-rose-900/30 border-2 border-rose-100 dark:border-rose-900/50 transition-all uppercase tracking-widest text-xs">Reset Totale App</button>
                   </section>
                 </div>
@@ -210,10 +227,17 @@ const App: React.FC = () => {
         )}
       </main>
 
-      <footer className="mt-auto border-t border-gray-100 dark:border-gray-800 py-10 text-center text-gray-400 dark:text-gray-600 text-[10px] font-black uppercase tracking-[0.3em]">
+      <footer className="mt-auto border-t border-[var(--border-color)] py-10 text-center text-[var(--text-secondary)] text-[10px] font-black uppercase tracking-[0.3em]">
         <p>AB PRO Athletic Diet Planner &bull; Built for Peak Performance</p>
+        <img
+          src="/AB_Nutrition_logo.png"
+          alt="AB Nutrition"
+          className="logo-header mx-auto mt-6 h-12 w-auto object-contain opacity-90"
+          style={{ maxHeight: 54 }}
+        />
       </footer>
-    </div>
+      </div>
+    </>
   );
 };
 

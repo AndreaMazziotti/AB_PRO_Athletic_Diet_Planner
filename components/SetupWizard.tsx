@@ -86,13 +86,13 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
 
   if (step <= 5) {
     return (
-      <div className="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-4 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-200 dark:border-gray-800 transition-colors">
+      <div className="max-w-2xl mx-auto bg-[var(--background-secondary)] p-4 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-[var(--border-color)] transition-colors">
         <div className="mb-6 md:mb-10 flex flex-col sm:flex-row justify-between sm:items-end gap-3 md:gap-6">
           <div>
-            <span className="text-indigo-600 dark:text-indigo-400 font-black text-xs md:text-sm uppercase tracking-[0.3em] mb-1 md:mb-2 block">Fase 1: Energia e Macro</span>
-            <h2 className="text-2xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tighter">Settimana {step}</h2>
+            <span className="text-brand-primary font-black text-xs md:text-sm uppercase tracking-[0.3em] mb-1 md:mb-2 block">Fase 1: Energia e Macro</span>
+            <h2 className="text-2xl md:text-4xl font-black text-[var(--text-primary)] tracking-tighter">Settimana {step}</h2>
           </div>
-          <span className="text-gray-500 dark:text-gray-400 text-[10px] md:text-xs font-black bg-gray-50 dark:bg-gray-800 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-gray-100 dark:border-gray-700 uppercase tracking-widest self-start sm:self-auto">Passo {step} / 12</span>
+          <span className="text-[var(--text-secondary)] text-[10px] md:text-xs font-black bg-[var(--background-main)] px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-[var(--border-color)] uppercase tracking-widest self-start sm:self-auto">Passo {step} / 12</span>
         </div>
 
         <div className="space-y-6 md:space-y-10">
@@ -118,13 +118,13 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
           <button
             disabled={step === 1}
             onClick={() => setStep(step - 1)}
-            className="flex-1 py-4 md:py-5 border-2 md:border-4 border-gray-100 dark:border-gray-800 rounded-2xl md:rounded-3xl font-black text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all uppercase tracking-widest disabled:opacity-20 text-xs md:text-base"
+            className="flex-1 py-4 md:py-5 border-2 md:border-4 border-[var(--border-color)] rounded-2xl md:rounded-3xl font-black text-[var(--text-secondary)] hover:bg-[var(--background-main)] transition-all uppercase tracking-widest disabled:opacity-20 text-xs md:text-base"
           >
             Indietro
           </button>
           <button
             onClick={() => setStep(step + 1)}
-            className="flex-1 py-4 md:py-5 bg-indigo-600 text-white rounded-2xl md:rounded-3xl font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 dark:shadow-none transition-all uppercase tracking-widest text-xs md:text-base"
+            className="flex-1 py-4 md:py-5 bg-brand-primary text-white rounded-2xl md:rounded-3xl font-black hover:bg-brand-primary-hover shadow-xl transition-all uppercase tracking-widest text-xs md:text-base"
           >
             Continua
           </button>
@@ -139,29 +139,29 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
     const isInvalid = totals.carboidrati !== 100 || totals.proteine !== 100 || totals.grassi !== 100;
 
     return (
-      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-900 p-5 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-200 dark:border-gray-800 transition-colors">
+      <div className="max-w-4xl mx-auto bg-[var(--background-secondary)] p-5 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-[var(--border-color)] transition-colors">
         <div className="mb-8 md:mb-10 flex flex-col sm:flex-row justify-between sm:items-end gap-4 md:gap-6">
           <div>
-            <span className="text-indigo-600 dark:text-indigo-400 font-black text-sm uppercase tracking-[0.2em] mb-2 block">Fase 2: Distribuzione Pasti</span>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tighter leading-tight truncate">{currentType.label}</h2>
+            <span className="text-brand-primary font-black text-sm uppercase tracking-[0.2em] mb-2 block">Fase 2: Distribuzione Pasti</span>
+            <h2 className="text-3xl md:text-4xl font-black text-[var(--text-primary)] tracking-tighter leading-tight truncate">{currentType.label}</h2>
           </div>
-          <span className="text-gray-600 dark:text-gray-400 text-xs font-black bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 uppercase tracking-widest self-start sm:self-auto">Passo {step} / 12</span>
+          <span className="text-[var(--text-secondary)] text-xs font-black bg-[var(--background-main)] px-4 py-2 rounded-xl border border-[var(--border-color)] uppercase tracking-widest self-start sm:self-auto">Passo {step} / 12</span>
         </div>
 
-        <div className="overflow-hidden border-2 border-gray-100 dark:border-gray-800 rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm mb-6 md:mb-10 bg-white dark:bg-black/20">
+        <div className="overflow-hidden border-2 border-[var(--border-color)] rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm mb-6 md:mb-10 bg-[var(--background-main)]">
           <table className="w-full text-left table-fixed md:table-auto">
-            <thead className="bg-gray-50 dark:bg-gray-800/80 border-b-2 border-gray-100 dark:border-gray-800">
+            <thead className="bg-[var(--background-secondary)] border-b-2 border-[var(--border-color)]">
               <tr>
-                <th className="pl-3 md:pl-8 py-3 md:py-6 text-[10px] md:text-xs font-black text-gray-500 dark:text-gray-500 uppercase tracking-widest w-1/4 md:w-auto">Pasto</th>
+                <th className="pl-3 md:pl-8 py-3 md:py-6 text-[10px] md:text-xs font-black text-[var(--text-secondary)] uppercase tracking-widest w-1/4 md:w-auto">Pasto</th>
                 <th className="px-0.5 md:px-4 py-3 md:py-6 text-[10px] md:text-xs font-black text-indigo-600 uppercase text-center tracking-widest">Carbs %</th>
                 <th className="px-0.5 md:px-4 py-3 md:py-6 text-[10px] md:text-xs font-black text-rose-600 uppercase text-center tracking-widest">Prot %</th>
                 <th className="px-0.5 md:px-4 py-3 md:py-6 text-[10px] md:text-xs font-black text-amber-600 uppercase text-center tracking-widest">Fat %</th>
               </tr>
             </thead>
-            <tbody className="divide-y-2 divide-gray-50 dark:divide-gray-800">
+            <tbody className="divide-y-2 divide-[var(--border-color)]">
               {currentType.distribuzioni.map((dist, idx) => (
-                <tr key={dist.pasto} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-950/10 transition-colors">
-                  <td className="pl-3 md:pl-8 py-2 md:py-6 font-black text-gray-800 dark:text-gray-200 uppercase text-xs md:text-base tracking-wider truncate pr-1">{dist.pasto}</td>
+                <tr key={dist.pasto} className="hover:bg-[var(--background-main)] transition-colors">
+                  <td className="pl-3 md:pl-8 py-2 md:py-6 font-black text-[var(--text-primary)] uppercase text-xs md:text-base tracking-wider truncate pr-1">{dist.pasto}</td>
                   <td className="px-0.5 md:px-4 py-2 md:py-6 text-center">
                     <SetupInput
                       value={dist.percentuali.carboidrati}
@@ -186,9 +186,9 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
                 </tr>
               ))}
             </tbody>
-            <tfoot className="bg-gray-900 dark:bg-black text-white">
+            <tfoot className="bg-[#1A1A1A] text-white dark:bg-black">
               <tr>
-                <td className="pl-3 md:px-8 py-3 md:py-8 font-black uppercase text-[10px] md:text-xs tracking-[0.2em] text-gray-400">Totale</td>
+                <td className="pl-3 md:px-8 py-3 md:py-8 font-black uppercase text-[10px] md:text-xs tracking-[0.2em] text-gray-300">Totale</td>
                 <td className={`px-0.5 md:px-4 py-3 md:py-8 text-center font-black text-base md:text-2xl ${totals.carboidrati === 100 ? 'text-emerald-400' : 'text-rose-500 underline decoration-4'}`}>
                   {totals.carboidrati}%
                 </td>
@@ -212,7 +212,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
         <div className="flex gap-3 md:gap-6">
           <button
             onClick={() => setStep(step - 1)}
-            className="flex-1 py-3 md:py-5 border-2 md:border-4 border-gray-200 dark:border-gray-800 rounded-xl md:rounded-3xl font-black text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all uppercase tracking-widest text-xs md:text-sm touch-manipulation"
+            className="flex-1 py-3 md:py-5 border-2 md:border-4 border-[var(--border-color)] rounded-xl md:rounded-3xl font-black text-[var(--text-secondary)] hover:bg-[var(--background-main)] transition-all uppercase tracking-widest text-xs md:text-sm touch-manipulation"
           >
             Indietro
           </button>
@@ -222,7 +222,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
               if (step === 12) onComplete(weeks, tipologie);
               else setStep(step + 1);
             }}
-            className="flex-1 py-3 md:py-5 bg-indigo-600 text-white rounded-xl md:rounded-3xl font-black hover:bg-indigo-700 shadow-xl shadow-indigo-200 dark:shadow-none transition-all uppercase tracking-widest disabled:opacity-50 disabled:bg-gray-400 text-xs md:text-sm touch-manipulation"
+            className="flex-1 py-3 md:py-5 bg-brand-primary text-white rounded-xl md:rounded-3xl font-black hover:bg-brand-primary-hover shadow-xl transition-all uppercase tracking-widest disabled:opacity-50 disabled:bg-gray-500 text-xs md:text-sm touch-manipulation"
           >
             {step === 12 ? 'FINALIZZA' : 'PROSSIMO'}
           </button>
@@ -252,8 +252,8 @@ const WeekSetupCard: React.FC<{
       <h3 className={`font-black uppercase tracking-widest text-xs md:text-sm mb-4 md:mb-6 ${textClass}`}>{title}</h3>
       <div className="space-y-4 md:space-y-6">
         <div>
-          <label className="block text-[10px] md:text-[11px] font-black opacity-60 uppercase mb-1 md:mb-2 tracking-widest text-gray-700 dark:text-gray-300">CALORIE TOTALI (Ricalcolate)</label>
-          <div className="w-full bg-white dark:bg-gray-950 border-4 border-transparent rounded-2xl md:rounded-3xl px-4 md:px-6 py-3 md:py-4 text-2xl md:text-3xl font-black text-gray-900 dark:text-white shadow-sm">
+          <label className="block text-[10px] md:text-[11px] font-black opacity-60 uppercase mb-1 md:mb-2 tracking-widest text-[var(--text-secondary)]">CALORIE TOTALI (Ricalcolate)</label>
+          <div className="w-full bg-[var(--background-main)] border-4 border-transparent rounded-2xl md:rounded-3xl px-4 md:px-6 py-3 md:py-4 text-2xl md:text-3xl font-black text-[var(--text-primary)] shadow-sm">
             {Math.round(value)} <span className="text-xs md:text-sm opacity-40 font-bold">kcal</span>
           </div>
         </div>
@@ -291,12 +291,12 @@ const MacroInput: React.FC<{ label: string, value: number, onChange: (v: number)
   };
   return (
     <div className="space-y-1 md:space-y-2">
-      <label className="block text-[10px] md:text-[11px] font-black opacity-60 uppercase tracking-tight text-center text-gray-600 dark:text-gray-400">{label}</label>
+      <label className="block text-[10px] md:text-[11px] font-black opacity-60 uppercase tracking-tight text-center text-[var(--text-secondary)]">{label}</label>
       <input
         type="number"
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value) || 0)}
-        className={`w-full bg-white dark:bg-gray-950 border-2 border-gray-200 dark:border-gray-800 rounded-xl md:rounded-2xl px-1 md:px-4 py-2 md:py-3 text-center font-black text-lg md:text-xl outline-none transition-all ${colorMap[color]} touch-manipulation`}
+        className={`w-full bg-[var(--background-main)] border-2 border-[var(--border-color)] rounded-xl md:rounded-2xl px-1 md:px-4 py-2 md:py-3 text-center font-black text-lg md:text-xl outline-none transition-all ${colorMap[color]} touch-manipulation`}
       />
     </div>
   );
@@ -314,7 +314,7 @@ const SetupInput: React.FC<{ value: number; onChange: (v: number) => void; color
       type="number"
       value={value}
       onChange={(e) => onChange(parseInt(e.target.value) || 0)}
-      className={`w-12 md:w-24 bg-gray-50 dark:bg-gray-950 border-2 border-gray-200 dark:border-gray-700 rounded-lg md:rounded-2xl px-0 md:px-3 py-2 md:py-3 text-center font-black text-base md:text-xl outline-none transition-all ${colorMap[color]} touch-manipulation`}
+      className={`w-12 md:w-24 bg-[var(--background-main)] border-2 border-[var(--border-color)] rounded-lg md:rounded-2xl px-0 md:px-3 py-2 md:py-3 text-center font-black text-base md:text-xl outline-none transition-all ${colorMap[color]} touch-manipulation`}
     />
   );
 };
