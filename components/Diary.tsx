@@ -85,7 +85,7 @@ const Diary: React.FC<DiaryProps> = ({ state, onDateSelect }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10 bg-[var(--background-secondary)] p-10 rounded-[3rem] border border-[var(--border-color)] shadow-xl">
+    <div className="max-w-4xl mx-auto space-y-6 md:space-y-10 bg-[var(--background-secondary)] p-4 md:p-10 rounded-xl md:rounded-[3rem] border border-[var(--border-color)] shadow-card">
       <div className="flex items-center gap-6">
         <span className="text-5xl">📅</span>
         <div className="space-y-1">

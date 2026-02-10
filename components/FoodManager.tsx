@@ -48,8 +48,8 @@ const FoodManager: React.FC<FoodManagerProps> = ({ alimenti, onAdd, onUpdate, on
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-20 transition-colors">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-[var(--background-secondary)] p-8 rounded-[2.5rem] border border-[var(--border-color)] shadow-md">
+    <div className="max-w-5xl mx-auto space-y-4 md:space-y-8 pb-20 transition-colors">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 bg-[var(--background-secondary)] p-4 md:p-8 rounded-xl md:rounded-[2.5rem] border border-[var(--border-color)] shadow-card">
         <h2 className="text-3xl font-black text-[var(--text-primary)] tracking-tight">Archivio Alimenti</h2>
         <button 
           onClick={() => setIsAdding(true)}

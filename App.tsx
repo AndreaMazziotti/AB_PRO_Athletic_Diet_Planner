@@ -153,7 +153,7 @@ const App: React.FC = () => {
       <div className="min-h-screen pb-12 flex flex-col bg-[var(--background-main)] transition-colors">
         <Header currentTab={currentTab} setTab={setCurrentTab} isConfigured={state.isConfigured} />
 
-      <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-4 md:py-8">
+      <main className="flex-1 w-full max-w-4xl mx-auto px-3 py-4 md:py-8 md:px-4">
         {!state.isConfigured ? (
           <div className="space-y-12 py-8 animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="text-center space-y-4">
@@ -188,7 +188,7 @@ const App: React.FC = () => {
               />
             )}
             {currentTab === 'config' && (
-              <div className="max-w-2xl mx-auto space-y-8 bg-[var(--background-secondary)] p-10 rounded-[2.5rem] border border-[var(--border-color)] shadow-sm transition-colors animate-in fade-in zoom-in-95 duration-300">
+              <div className="max-w-2xl mx-auto space-y-8 bg-[var(--background-secondary)] p-4 md:p-10 rounded-xl md:rounded-[2.5rem] border border-[var(--border-color)] shadow-card transition-colors animate-in fade-in zoom-in-95 duration-300">
                 <div className="flex items-center gap-4 mb-4">
                   <span className="text-4xl">⚙️</span>
                   <h2 className="text-3xl font-black text-[var(--text-primary)] tracking-tight">Impostazioni</h2>

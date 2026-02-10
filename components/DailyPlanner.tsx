@@ -113,9 +113,9 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6 md:space-y-8 pb-32 animate-in fade-in duration-300 px-4 md:px-6">
+    <div className="w-full max-w-4xl mx-auto space-y-4 md:space-y-8 pb-32 animate-in fade-in duration-300 px-3 md:px-6">
       {/* Date Navigation */}
-      <div className="flex items-center justify-between bg-[var(--background-secondary)] p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-[var(--border-color)] shadow-lg">
+      <div className="flex items-center justify-between bg-[var(--background-secondary)] p-3 md:p-6 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card">
         <button
           onClick={() => navigateDate(-1)}
           className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--text-primary)] opacity-70 hover:opacity-100 transition-opacity touch-manipulation"
@@ -142,8 +142,8 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
       </div>
 
       {/* Selector Section */}
-      <div className="bg-[var(--background-secondary)] p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-[var(--border-color)] shadow-xl overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      <div className="bg-[var(--background-secondary)] p-3 md:p-8 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           <div className="space-y-3 md:space-y-4">
             <h3 className="text-xs md:text-sm font-bold uppercase tracking-widest text-[var(--text-secondary)] pl-1">Settimana</h3>
             <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2 md:pb-0 no-scrollbar touch-pan-x">
@@ -178,11 +178,11 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
       </div>
 
       {/* Main Stats Header - Riepilogo Giornaliero */}
-      <div className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-[var(--border-color)] bg-[var(--background-secondary)] shadow-xl transition-all overflow-hidden">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-10">
-          <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-between md:justify-start">
-            <div className="flex items-center gap-4">
-              <div className="bg-[var(--background-main)] p-4 md:p-5 rounded-2xl md:rounded-3xl border border-[var(--border-color)] shrink-0 flex items-center justify-center">
+      <div className="p-3 md:p-8 rounded-xl md:rounded-[2.5rem] border border-[var(--border-color)] bg-[var(--background-secondary)] shadow-card transition-all overflow-hidden">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 md:gap-10">
+          <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-start">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="bg-[var(--background-main)] p-2.5 md:p-5 rounded-xl md:rounded-3xl border border-[var(--border-color)] shrink-0 flex items-center justify-center">
                 {isON ? <FlameIcon /> : <RestIcon />}
               </div>
               <div className="space-y-1 md:space-y-1.5">
@@ -199,7 +199,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 w-full lg:w-auto">
+          <div className="grid grid-cols-3 gap-1.5 w-full lg:w-auto min-w-0">
             <HeaderMacroBox label="Carbs" actual={dailyActualTotals.carboidrati} target={weekMacroConfig.macros.carboidrati.grammi} />
             <HeaderMacroBox label="Prot" actual={dailyActualTotals.proteine} target={weekMacroConfig.macros.proteine.grammi} />
             <HeaderMacroBox label="FAT" actual={dailyActualTotals.grassi} target={weekMacroConfig.macros.grassi.grammi} />
@@ -208,7 +208,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
       </div>
 
       {/* Meals Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
         {dayTypeConfig.distribuzioni.map(dist => {
           const target = getMealTarget(dist.pasto);
           const mealData = state.pastiSalvati.find(p => p.data === selectedDate && p.nomePasto === dist.pasto);
@@ -216,14 +216,14 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
           const status = mealData?.status || 'regular';
 
           return (
-            <div key={dist.pasto} className={`bg-[var(--background-secondary)] rounded-[2rem] md:rounded-[2.5rem] border shadow-xl flex flex-col transition-all relative overflow-hidden ${status === 'skipped' ? 'border-[var(--border-color)] grayscale opacity-70' :
+            <div key={dist.pasto} className={`bg-[var(--background-secondary)] rounded-xl md:rounded-[2.5rem] border shadow-card flex flex-col transition-all relative overflow-hidden ${status === 'skipped' ? 'border-[var(--border-color)] grayscale opacity-70' :
               status === 'cheat' ? 'border-purple-500/60' :
                 'border-[var(--border-color)] hover:border-brand-primary'
               }`}>
               {status === 'cheat' && <div className="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest z-10">Cheat Meal</div>}
               {status === 'skipped' && <div className="absolute top-0 right-0 bg-gray-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest z-10">Saltato</div>}
 
-              <div className="px-6 md:px-8 py-4 md:py-6 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--background-main)]/40">
+              <div className="px-3 md:px-8 py-3 md:py-6 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--background-main)]/40">
                 <span className="font-black text-brand-primary uppercase tracking-widest text-base md:text-lg truncate mr-2">{dist.pasto}</span>
                 <div className="flex items-baseline gap-1.5 shrink-0">
                   <span className="text-xl md:text-2xl font-black tabular-nums text-[var(--text-primary)]">{status === 'skipped' ? 0 : Math.round(actual.kcal)}</span>
@@ -231,8 +231,8 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
                 </div>
               </div>
 
-              <div className="p-5 md:p-8 space-y-6 md:space-y-8 flex-1">
-                <div className="grid grid-cols-3 gap-2 md:gap-3">
+              <div className="p-3 md:p-8 space-y-4 md:space-y-8 flex-1">
+                <div className="grid grid-cols-3 gap-1.5 min-w-0">
                   <MealMacroBox label="Carbs" actual={status === 'skipped' ? 0 : actual.carboidrati} target={target.carboidrati} />
                   <MealMacroBox label="Prot" actual={status === 'skipped' ? 0 : actual.proteine} target={target.proteine} />
                   <MealMacroBox label="Fat" actual={status === 'skipped' ? 0 : actual.grassi} target={target.grassi} />
@@ -242,7 +242,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
                   {status === 'regular' && mealData && mealData.alimenti.length > 0 ? (
                     <div className="space-y-2">
                       {mealData.alimenti.map((item, i) => (
-                        <div key={i} className="flex justify-between items-center text-[11px] md:text-sm font-medium bg-[var(--background-main)] p-2 md:p-4 rounded-xl border border-[var(--border-color)]">
+                        <div key={i} className="flex justify-between items-center text-[11px] md:text-sm font-medium bg-[var(--background-main)] p-2 md:p-4 rounded-lg border border-[var(--border-color)]">
                           <span className="truncate pr-2 text-[var(--text-primary)] min-w-0 flex-1" title={state.alimenti.find(a => a.id === item.alimentoId)?.nome}>
                             {state.alimenti.find(a => a.id === item.alimentoId)?.nome}
                           </span>
@@ -316,26 +316,26 @@ const HeaderMacroBox: React.FC<{ label: string; actual: number; target: number }
   const progressPct = target > 0 ? Math.min(100, (actual / target) * 100) : 0;
 
   return (
-    <div className="relative p-3 md:p-5 rounded-[1.25rem] md:rounded-2xl flex flex-col items-center justify-center border border-[var(--border-color)] bg-[var(--background-secondary)] h-full min-h-0">
-      <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-[1.25rem] md:rounded-t-2xl bg-[var(--border-color)] overflow-hidden">
+    <div className="relative p-2 md:p-5 rounded-lg md:rounded-2xl flex flex-col items-center justify-center border border-[var(--border-color)] bg-[var(--background-secondary)] h-full min-h-0 min-w-0">
+      <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-lg md:rounded-t-2xl bg-[var(--border-color)] overflow-hidden">
         <div
           className="h-full bg-brand-primary transition-all duration-300"
           style={{ width: `${Math.min(100, progressPct)}%` }}
         />
       </div>
-      <span className="text-[9px] md:text-[11px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-2 mt-0.5">{label}</span>
-      <div className="flex flex-col items-center gap-0.5">
-        <div className="flex items-baseline gap-1">
+      <span className="text-[9px] md:text-[11px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1 mt-0.5">{label}</span>
+      <div className="flex flex-col items-center gap-0.5 min-w-0 w-full">
+        <div className="flex items-baseline gap-0.5 md:gap-1 whitespace-nowrap">
           <span
-            className="text-xl md:text-3xl font-black tabular-nums leading-none text-[var(--text-primary)]"
+            className="text-base md:text-3xl font-black tabular-nums leading-none text-[var(--text-primary)]"
             style={isOverTarget ? { color: 'var(--brand-primary)' } : undefined}
           >
             {Math.round(actual)}
           </span>
-          <span className="text-xs md:text-sm font-medium text-[var(--text-secondary)]">/ {target}g</span>
+          <span className="text-[10px] md:text-sm font-medium text-[var(--text-secondary)]">/ {target}g</span>
         </div>
-        <span className="text-[10px] md:text-xs font-medium text-[var(--text-secondary)] tabular-nums">
-          {diff > 0 ? `+${diff}g` : diff === 0 ? '—' : `Mancanti: ${diff}g`}
+        <span className="text-[9px] md:text-xs font-medium text-[var(--text-secondary)] tabular-nums truncate max-w-full">
+          {diff > 0 ? `+${diff}g` : diff === 0 ? '—' : `−${Math.abs(diff)}g`}
         </span>
       </div>
     </div>
@@ -348,17 +348,17 @@ const MealMacroBox: React.FC<{ label: string; actual: number; target: number }> 
   const progressPct = target > 0 ? Math.min(100, (actual / target) * 100) : 0;
 
   return (
-    <div className="pt-3 px-2 pb-2 md:pt-4 md:px-3 md:pb-3 rounded-xl border border-[var(--border-color)] bg-[var(--background-main)] flex flex-col items-center justify-center min-w-0 w-full">
-      <span className="text-[9px] md:text-[11px] font-bold uppercase mb-2 tracking-widest text-[var(--text-secondary)]">{label}</span>
+    <div className="pt-2 px-1.5 pb-1.5 md:pt-4 md:px-3 md:pb-3 rounded-lg md:rounded-xl border border-[var(--border-color)] bg-[var(--background-main)] flex flex-col items-center justify-center min-w-0 w-full">
+      <span className="text-[9px] md:text-[11px] font-bold uppercase mb-1 tracking-widest text-[var(--text-secondary)]">{label}</span>
 
-      <div className="flex flex-col items-center gap-0.5 w-full">
-        <div className="flex items-baseline gap-1">
-          <span className={`text-lg md:text-2xl font-black tabular-nums leading-none ${isOverTarget ? 'text-brand-primary' : 'text-[var(--text-primary)]'}`}>
+      <div className="flex flex-col items-center gap-0.5 w-full min-w-0">
+        <div className="flex items-baseline gap-0.5 md:gap-1 whitespace-nowrap">
+          <span className={`text-base md:text-2xl font-black tabular-nums leading-none ${isOverTarget ? 'text-brand-primary' : 'text-[var(--text-primary)]'}`}>
             {Math.round(actual)}
           </span>
-          <span className="text-xs md:text-sm font-medium text-[var(--text-secondary)]">/ {target}g</span>
+          <span className="text-[10px] md:text-sm font-medium text-[var(--text-secondary)]">/ {target}g</span>
         </div>
-        <span className="text-[10px] md:text-xs font-medium text-[var(--text-secondary)] tabular-nums">
+        <span className="text-[9px] md:text-xs font-medium text-[var(--text-secondary)] tabular-nums">
           {diff > 0 ? `+${diff}g` : `${diff}g`}
         </span>
         <div className="w-full h-1 rounded-full bg-[var(--border-color)] mt-1.5 overflow-hidden" role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100}>
