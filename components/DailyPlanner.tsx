@@ -278,7 +278,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
               <button
                 disabled={status === 'skipped'}
                 onClick={() => setActiveMealComposer(dist.pasto)}
-                className="btn-componi-pasto w-full h-14 md:h-16 text-white font-black text-lg md:text-xl uppercase tracking-widest rounded-b-[2rem] md:rounded-b-[2.5rem] disabled:opacity-50 touch-manipulation flex items-center justify-center"
+                className="btn-componi-pasto w-full h-14 md:h-16 text-white font-black text-lg md:text-xl uppercase tracking-widest rounded-b-xl md:rounded-b-[2.5rem] disabled:opacity-50 touch-manipulation flex items-center justify-center"
               >
                 Componi Pasto
               </button>
