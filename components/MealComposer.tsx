@@ -186,16 +186,16 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
   }, [selezionati, allAlimentiForDisplay]);
 
   return (
-    <div className="max-w-3xl mx-auto bg-[var(--background-secondary)] rounded-2xl sm:rounded-[2rem] border border-[var(--border-color)] shadow-xl overflow-hidden">
-      <div className="px-2.5 py-4 sm:px-6 sm:py-5 bg-brand-primary text-white flex justify-between items-center">
-        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">{pastoLabel}</h2>
-        <button onClick={onCancel} className="bg-white/20 hover:bg-white/40 text-white w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-2xl transition-colors" aria-label="Chiudi">&times;</button>
+    <div className="composer-main max-w-3xl mx-auto bg-[var(--background-secondary)] rounded-xl sm:rounded-2xl border border-[var(--border-color)] shadow-xl overflow-hidden">
+      <div className="px-2.5 py-3 sm:px-6 sm:py-4 bg-brand-primary text-white flex justify-between items-center">
+        <h2 className="text-lg sm:text-2xl font-black uppercase tracking-tight">{pastoLabel}</h2>
+        <button onClick={onCancel} className="bg-white/20 hover:bg-white/40 text-white w-9 h-9 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-xl sm:text-2xl transition-colors" aria-label="Chiudi">&times;</button>
       </div>
 
-      <div className="px-2.5 sm:px-4 md:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        {/* Obiettivo e totali – riga compatta, label 10px, numero/target in evidenza */}
-        <div className="p-3 sm:p-4 bg-gray-900 dark:bg-black text-white rounded-xl sm:rounded-2xl border border-[var(--border-color)]">
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+      <div className="composer-content px-2.5 sm:px-4 md:px-6 py-3 sm:py-5 space-y-3 sm:space-y-4 composer-safe-bottom">
+        {/* Obiettivo e totali – griglia 2x2 / riga compatta, label 10px, numero/target in evidenza */}
+        <div className="composer-card p-2.5 sm:p-3 bg-gray-900 dark:bg-black text-white rounded-lg sm:rounded-xl border border-[var(--border-color)]">
+          <div className="grid grid-cols-4 gap-1 sm:gap-1.5">
             <UnifiedStat label="KCAL" actual={Math.round(totals.kcal)} target={target.kcal} diff={diffs.kcal} unit="" highlight />
             <UnifiedStat label="CARBS" actual={Math.round(totals.carboidrati)} target={target.carboidrati} diff={diffs.carboidrati} unit="g" />
             <UnifiedStat label="PROT" actual={Math.round(totals.proteine)} target={target.proteine} diff={diffs.proteine} unit="g" />
@@ -203,46 +203,46 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
           </div>
         </div>
 
-        {/* Componi Automaticamente – pulsante solido, stato disabilitato con testo sotto */}
-        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-[var(--background-main)] border border-[var(--border-color)]">
+        {/* Componi Automaticamente – pulsante solido full-width, no box tratteggiato */}
+        <div className="composer-card p-2.5 sm:p-3 rounded-lg sm:rounded-xl bg-[var(--background-main)] border border-[var(--border-color)]">
           {canAutoCompose ? (
             <button
               type="button"
               onClick={() => runSolver({})}
               disabled={solverLoading}
-              className="composer-btn-auto w-full py-3.5 sm:py-4 px-4 rounded-xl font-semibold text-white text-sm sm:text-base flex items-center justify-center gap-2 relative overflow-hidden disabled:opacity-80"
+              className="composer-btn-auto w-full py-3 sm:py-3.5 px-3 rounded-lg font-semibold text-white text-sm flex items-center justify-center gap-2 relative overflow-hidden disabled:opacity-80"
             >
               {solverLoading ? (
                 <>
                   <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
-                  <MagicWandIcon className="w-5 h-5 animate-spin-slow shrink-0" />
+                  <MagicWandIcon className="w-4 h-4 animate-spin-slow shrink-0" />
                   <span>Calcolo in corso...</span>
                 </>
               ) : (
                 <>
-                  <MagicWandIcon className="w-5 h-5 shrink-0" />
+                  <MagicWandIcon className="w-4 h-4 shrink-0" />
                   Componi automaticamente
                 </>
               )}
             </button>
           ) : (
             <>
-              <button type="button" disabled className="w-full py-3.5 sm:py-4 px-4 rounded-xl font-semibold text-gray-400 bg-gray-700/80 text-sm sm:text-base flex items-center justify-center gap-2 cursor-not-allowed" aria-disabled>
-                <MagicWandIcon className="w-5 h-5 shrink-0 opacity-60" />
+              <button type="button" disabled className="composer-btn-disabled w-full py-3 sm:py-3.5 px-3 rounded-lg font-semibold text-gray-500 text-sm flex items-center justify-center gap-2 cursor-not-allowed" aria-disabled>
+                <MagicWandIcon className="w-4 h-4 shrink-0 opacity-50" />
                 Componi automaticamente
               </button>
-              <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] mt-1.5 text-center">Aggiungi almeno 3 ingredienti per attivare</p>
+              <p className="text-[10px] text-[var(--text-secondary)] mt-1.5 text-center">Aggiungi almeno 3 ingredienti per attivare</p>
             </>
           )}
         </div>
 
         {selectionWarning && (
-          <div className="px-3 py-2 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-xs font-semibold">
+          <div className="px-2.5 py-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[10px] font-semibold">
             {selectionWarning}
           </div>
         )}
 
-        {/* Cerca alimento – bordo 1px accento */}
+        {/* Cerca alimento – bordo 1px accento sottile */}
         <div className="relative group">
           <input
             type="text"
@@ -250,22 +250,22 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
             value={searchTerm}
             onFocus={() => setShowResults(true)}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="composer-search-input w-full h-12 sm:h-14 bg-[var(--background-main)] border border-[var(--border-color)] focus:border-brand-primary rounded-xl px-4 text-base sm:text-lg font-semibold outline-none transition-colors text-[var(--text-primary)]"
+            className="composer-search-input w-full h-11 sm:h-12 bg-[var(--background-main)] border border-[var(--border-color)] rounded-lg px-3 text-sm font-medium outline-none transition-colors text-[var(--text-primary)]"
           />
           {showResults && searchTerm.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--background-secondary)] border border-[var(--border-color)] rounded-xl shadow-lg z-50 max-h-56 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1.5 bg-[var(--background-secondary)] border border-[var(--border-color)] rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
               {filtered.map(a => (
                 <div
                   key={a.id}
-                  className="flex items-center gap-2 w-full px-3 py-2.5 hover:bg-[var(--background-main)] border-b last:border-0 border-[var(--border-color)]"
+                  className="flex items-center gap-2 w-full px-2.5 py-2 hover:bg-[var(--background-main)] border-b last:border-0 border-[var(--border-color)]"
                 >
-                  <span className="flex-1 font-medium text-sm text-[var(--text-primary)] truncate min-w-0">
+                  <span className="flex-1 font-medium text-xs text-[var(--text-primary)] truncate min-w-0">
                     {a.nome}
                   </span>
                   <button
                     type="button"
                     onClick={() => addAlimento(a)}
-                    className="shrink-0 py-1.5 px-2.5 rounded-lg bg-brand-primary text-white text-[10px] font-bold uppercase tracking-wider hover:bg-brand-primary-hover"
+                    className="composer-add-btn shrink-0 py-1 px-2 rounded-md bg-brand-primary text-white text-[10px] font-bold uppercase tracking-wide hover:bg-brand-primary-hover"
                   >
                     Aggiungi
                   </button>
@@ -275,10 +275,10 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
           )}
         </div>
 
-        {/* Lista ingredienti – righe sottili, X rossa minimale */}
-        <div className="space-y-1.5">
+        {/* Lista ingredienti – righe sottili, X rossa minimale (no card giganti) */}
+        <div className="space-y-1">
           <div className="flex flex-wrap items-center justify-between gap-1">
-            <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
               Ingredienti ({selezionati.length})
             </h3>
             {pinnedForSolver.size > 0 && (
@@ -287,9 +287,9 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
               </button>
             )}
           </div>
-          <div className="space-y-1 max-h-[280px] overflow-y-auto no-scrollbar">
+          <div className="space-y-0.5 max-h-[240px] overflow-y-auto no-scrollbar">
             {selezionati.length === 0 ? (
-              <p className="py-6 text-center text-xs text-[var(--text-secondary)] rounded-xl border border-dashed border-[var(--border-color)]">
+              <p className="py-4 text-center text-[10px] text-[var(--text-secondary)] rounded-lg border border-dashed border-[var(--border-color)]">
                 Cerca sopra e aggiungi gli alimenti.
               </p>
             ) : (
@@ -301,22 +301,22 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
                 return (
                   <div
                     key={idx}
-                    className={`composer-ingredient-row flex items-center gap-2 px-3 py-2 rounded-lg border min-w-0 ${
+                    className={`composer-ingredient-row flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border min-w-0 ${
                       isPinned ? 'bg-[var(--background-secondary)] border-brand-primary/40' : 'bg-[var(--background-main)] border-[var(--border-color)]'
                     }`}
                   >
                     <button
                       type="button"
                       onClick={() => togglePin(item.alimentoId)}
-                      className={`shrink-0 p-1.5 rounded-md transition-colors ${isPinned ? 'text-brand-primary bg-brand-primary/10' : 'text-[var(--text-secondary)] hover:bg-[var(--background-secondary)]'}`}
+                      className={`shrink-0 p-1 rounded transition-colors ${isPinned ? 'text-brand-primary bg-brand-primary/10' : 'text-[var(--text-secondary)] hover:bg-[var(--background-secondary)]'}`}
                       title={isPinned ? 'Sblocca' : 'Fissa quantità'}
                       aria-label={isPinned ? 'Sblocca' : 'Fissa'}
                     >
-                      <LockIcon locked={isPinned} className="w-4 h-4" />
+                      <LockIcon locked={isPinned} className="w-3.5 h-3.5" />
                     </button>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-[var(--text-primary)] truncate">{a.nome}</div>
-                      <div className="flex gap-2 text-[10px] text-[var(--text-secondary)]">
+                      <div className="text-xs font-semibold text-[var(--text-primary)] truncate">{a.nome}</div>
+                      <div className="flex gap-1.5 text-[10px] text-[var(--text-secondary)]">
                         <span>{m.carboidrati}g C</span>
                         <span>{m.proteine}g P</span>
                         <span>{m.grassi}g G</span>
@@ -327,9 +327,9 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
                       type="number"
                       value={item.quantita}
                       onChange={(e) => updateQuantita(idx, parseFloat(e.target.value) || 0)}
-                      className={`min-w-[4.5rem] w-20 rounded-lg px-2 py-1.5 text-center text-sm font-bold tabular-nums outline-none border border-transparent focus:border-brand-primary bg-[var(--background-secondary)] text-[var(--text-primary)] [&::-webkit-inner-spin-button]:opacity-100 ${isPinned ? 'text-brand-primary' : ''}`}
+                      className={`min-w-[3.5rem] w-16 rounded-md px-1.5 py-1 text-center text-xs font-bold tabular-nums outline-none border border-transparent focus:border-brand-primary bg-[var(--background-secondary)] text-[var(--text-primary)] [&::-webkit-inner-spin-button]:opacity-100 ${isPinned ? 'text-brand-primary' : ''}`}
                     />
-                    <button onClick={() => removeAlimento(idx)} className="composer-remove-btn shrink-0 w-8 h-8 flex items-center justify-center text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors" aria-label="Rimuovi">×</button>
+                    <button onClick={() => removeAlimento(idx)} className="composer-remove-btn shrink-0 w-7 h-7 flex items-center justify-center text-rose-500 hover:bg-rose-500/10 rounded transition-colors text-sm font-light" aria-label="Rimuovi">×</button>
                   </div>
                 );
               })
@@ -337,9 +337,9 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
           </div>
         </div>
 
-        <div className="flex gap-2 sm:gap-3 pt-2">
-          <button onClick={onCancel} className="flex-1 py-3.5 sm:py-4 border border-[var(--border-color)] rounded-xl font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-sm">Annulla</button>
-          <button onClick={() => onSave(selezionati)} className="flex-1 py-3.5 sm:py-4 bg-brand-primary text-white rounded-xl font-semibold uppercase tracking-wider text-sm shadow-lg hover:bg-brand-primary-hover">Salva Pasto</button>
+        <div className="composer-actions flex gap-2 pt-2">
+          <button onClick={onCancel} className="flex-1 py-3 border border-[var(--border-color)] rounded-lg font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-xs">Annulla</button>
+          <button onClick={() => onSave(selezionati)} className="flex-1 py-3 bg-brand-primary text-white rounded-lg font-semibold uppercase tracking-wider text-xs shadow-lg hover:bg-brand-primary-hover">Conferma Pasto</button>
         </div>
       </div>
 
@@ -520,13 +520,13 @@ const UnifiedStat: React.FC<{
   const diffColor = diff > 0 ? 'text-rose-400' : 'text-emerald-400';
   const diffLabel = unit ? `${diff > 0 ? '+' : ''}${Math.round(diff)}${unit}` : `${diff > 0 ? '+' : ''}${Math.round(diff)} kcal`;
   return (
-    <div className={`flex flex-col items-center justify-center min-w-0 py-1.5 px-1 rounded-lg ${highlight ? 'bg-brand-primary/90 text-white' : 'bg-white/5'}`}>
-      <span className="text-[10px] font-medium opacity-60 uppercase tracking-wider">{label}</span>
-      <div className="text-sm sm:text-base font-bold tabular-nums mt-0.5 leading-tight">
+    <div className={`flex flex-col items-center justify-center min-w-0 py-1 px-0.5 rounded-md ${highlight ? 'bg-brand-primary/90 text-white' : 'bg-white/5'}`}>
+      <span className="text-[9px] font-medium opacity-50 uppercase tracking-wider">{label}</span>
+      <div className="text-xs sm:text-sm font-bold tabular-nums mt-0.5 leading-tight">
         <span style={isOverTarget && !highlight ? { color: 'var(--brand-primary)' } : undefined}>{actual}</span>
-        <span className="text-[10px] font-normal opacity-70"> / {target}{unit ? unit : ''}</span>
+        <span className="text-[9px] font-normal opacity-60"> / {target}{unit ? unit : ''}</span>
       </div>
-      <span className={`text-[9px] font-semibold mt-0.5 ${isOk ? 'text-emerald-400' : diffColor}`}>{diffLabel}</span>
+      <span className={`text-[8px] font-semibold mt-0.5 ${isOk ? 'text-emerald-400' : diffColor}`}>{diffLabel}</span>
     </div>
   );
 };

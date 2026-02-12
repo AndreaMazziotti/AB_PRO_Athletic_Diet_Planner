@@ -92,17 +92,19 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
     const target = getMealTarget(activeMealComposer);
     const mealData = state.pastiSalvati.find(p => p.data === selectedDate && p.nomePasto === activeMealComposer);
     return (
-      <MealComposer
-        target={target}
-        pastoLabel={activeMealComposer.toUpperCase()}
-        alimenti={state.alimenti}
-        initialSelection={mealData ? mealData.alimenti : []}
-        onSave={(items) => {
-          onSaveMeal(selectedDate, selectedWeek, selectedDayType, activeMealComposer, items, 'regular');
-          setActiveMealComposer(null);
-        }}
-        onCancel={() => setActiveMealComposer(null)}
-      />
+      <div className="composer-wrapper -mx-3 px-[10px] sm:mx-0 sm:px-0 max-w-3xl mx-auto">
+        <MealComposer
+          target={target}
+          pastoLabel={activeMealComposer.toUpperCase()}
+          alimenti={state.alimenti}
+          initialSelection={mealData ? mealData.alimenti : []}
+          onSave={(items) => {
+            onSaveMeal(selectedDate, selectedWeek, selectedDayType, activeMealComposer, items, 'regular');
+            setActiveMealComposer(null);
+          }}
+          onCancel={() => setActiveMealComposer(null)}
+        />
+      </div>
     );
   }
 

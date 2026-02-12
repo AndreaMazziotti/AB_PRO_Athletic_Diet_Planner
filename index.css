@@ -274,7 +274,44 @@ html.dark .theme-toggle-btn:hover {
   }
 }
 
-/* Meal Composer: pulsante Componi automaticamente – solido, dark tech */
+/* ============================================
+   Meal Composer – Mobile-first, Dark Tech
+   ============================================ */
+
+/* Main wrapper: contenitore con padding laterale max 10px su mobile (gestito da .composer-wrapper in DailyPlanner) */
+.composer-content {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+@media (min-width: 640px) {
+  .composer-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+@media (min-width: 768px) {
+  .composer-content {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Card: padding interno 12px (meno “gonfie”) */
+.composer-card {
+  padding: 12px;
+}
+@media (min-width: 640px) {
+  .composer-card {
+    padding: 12px 14px;
+  }
+}
+
+/* Safe area: pulsanti d’azione non coperti da barra iPhone / tab browser */
+.composer-safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* Pulsante Componi automaticamente – solido, full-width */
 .composer-btn-auto {
   background: var(--brand-primary);
   box-shadow: 0 2px 8px rgba(230, 0, 0, 0.25);
@@ -288,19 +325,37 @@ html.dark .theme-toggle-btn:hover {
   transform: scale(0.98);
 }
 
-/* Composer: input ricerca – bordo 1px accento */
-.composer-search-input:focus {
-  box-shadow: 0 0 0 1px var(--brand-primary);
+/* Stato disabilitato: grigio scuro, testo sotto “Aggiungi almeno 3 ingredienti…” */
+.composer-btn-disabled {
+  background: #374151;
+  color: #9ca3af;
 }
 
-/* Composer: riga ingrediente e X rimuovi minimale */
+/* Input ricerca: bordo accento 1px (no outline spesso) */
+.composer-search-input {
+  border-width: 1px;
+}
+.composer-search-input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 1px var(--brand-primary);
+  outline: none;
+}
+
+/* Lista risultati: pulsante AGGIUNGI compatto, allineato a destra */
+.composer-add-btn {
+  min-width: 4.5rem;
+}
+
+/* Righe ingredienti e X rossa minimale */
 .composer-ingredient-row {
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 .composer-remove-btn {
-  font-size: 1.25rem;
+  font-size: 1rem;
   line-height: 1;
-  font-weight: 400;
+  font-weight: 300;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 /* Meal Solver: loading shimmer e rotazione bacchetta */
@@ -317,4 +372,41 @@ html.dark .theme-toggle-btn:hover {
 }
 .animate-spin-slow {
   animation: spin-slow 0.8s linear infinite;
+}
+
+/* ============================================
+   Setup Wizard – Brand identity & mobile UX
+   ============================================ */
+
+.setup-progress-track {
+  background: var(--background-main);
+}
+.setup-progress-fill {
+  background: var(--brand-primary);
+}
+
+.setup-kcal-box {
+  background: var(--background-main);
+  border: 1px solid var(--border-color);
+}
+html.dark .setup-kcal-box {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.setup-macro-input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 1px var(--brand-primary);
+  outline: none;
+}
+
+.setup-btn-next {
+  border-radius: 16px;
+}
+
+@keyframes setup-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: setup-fade-in 0.25s ease-out forwards;
 }

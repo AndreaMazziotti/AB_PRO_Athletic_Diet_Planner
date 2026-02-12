@@ -1,8 +1,40 @@
-
 import React, { useState } from 'react';
 import { SettimanaConfig, TipologiaGiornataConfig, MacroSplit } from '../types';
 import { calculateMacrosFromPercentages } from '../utils';
 import { TIPOLOGIE_GIORNATA } from '../constants';
+
+const TOTAL_STEPS = 12;
+const progressPercent = (step: number) => (step / TOTAL_STEPS) * 100;
+
+function TrophyIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+      <path d="M4 22h16" />
+      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+    </svg>
+  );
+}
+
+function MeditationIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v2" />
+      <path d="M12 19v2" />
+      <path d="M3 12h2" />
+      <path d="M19 12h2" />
+      <path d="M5.64 5.64l1.42 1.42" />
+      <path d="M16.94 16.94l1.42 1.42" />
+      <path d="M5.64 18.36l1.42-1.42" />
+      <path d="M16.94 7.06l1.42-1.42" />
+      <path d="M12 8a4 4 0 0 0-4 4c0 1.5.8 2.8 2 3.5" />
+    </svg>
+  );
+}
 
 interface SetupWizardProps {
   onComplete: (weeks: SettimanaConfig[], tipologie: TipologiaGiornataConfig[]) => void;
@@ -86,47 +118,52 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
 
   if (step <= 5) {
     return (
-      <div className="max-w-2xl mx-auto bg-[var(--background-secondary)] p-4 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-[var(--border-color)] transition-colors">
-        <div className="mb-6 md:mb-10 flex flex-col sm:flex-row justify-between sm:items-end gap-3 md:gap-6">
-          <div>
-            <span className="text-brand-primary font-black text-xs md:text-sm uppercase tracking-[0.3em] mb-1 md:mb-2 block">Fase 1: Energia e Macro</span>
-            <h2 className="text-2xl md:text-4xl font-black text-[var(--text-primary)] tracking-tighter">Settimana {step}</h2>
+      <div className="setup-wizard max-w-2xl mx-auto rounded-xl md:rounded-2xl transition-colors">
+        <div className="setup-wizard-inner px-3 sm:px-4 md:px-10 pb-24 md:pb-12">
+          {/* Header + progress bar */}
+          <div className="mb-5 md:mb-8">
+            <span className="text-brand-primary font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] block mb-1">FASE 1: ENERGIA E MACRO</span>
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white tracking-tight">Settimana {step}</h1>
+            <div className="setup-progress-track mt-2 h-1.5 w-full rounded-full bg-[var(--background-main)] overflow-hidden">
+              <div
+                className="setup-progress-fill h-full rounded-full bg-brand-primary transition-all duration-300 ease-out"
+                style={{ width: `${progressPercent(step)}%` }}
+              />
+            </div>
           </div>
-          <span className="text-[var(--text-secondary)] text-[10px] md:text-xs font-black bg-[var(--background-main)] px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-[var(--border-color)] uppercase tracking-widest self-start sm:self-auto">Passo {step} / 12</span>
+
+          <div key={step} className="setup-step-content space-y-4 md:space-y-6 animate-fade-in">
+            <WeekSetupCard
+              type="on"
+              value={weeks[currentWeekIndex].giorniON.calorieTotal}
+              macros={weeks[currentWeekIndex].giorniON.macros}
+              onKcalChange={(val) => handleKcalChange(currentWeekIndex, 'giorniON', val)}
+              onMacroChange={(macro, val) => handleMacroChange(currentWeekIndex, 'giorniON', macro, val)}
+            />
+            <WeekSetupCard
+              type="off"
+              value={weeks[currentWeekIndex].giorniOFF.calorieTotal}
+              macros={weeks[currentWeekIndex].giorniOFF.macros}
+              onKcalChange={(val) => handleKcalChange(currentWeekIndex, 'giorniOFF', val)}
+              onMacroChange={(macro, val) => handleMacroChange(currentWeekIndex, 'giorniOFF', macro, val)}
+            />
+          </div>
         </div>
 
-        <div className="space-y-6 md:space-y-10">
-          <WeekSetupCard
-            title="🏋️ GIORNI ON"
-            value={weeks[currentWeekIndex].giorniON.calorieTotal}
-            macros={weeks[currentWeekIndex].giorniON.macros}
-            onKcalChange={(val) => handleKcalChange(currentWeekIndex, 'giorniON', val)}
-            onMacroChange={(macro, val) => handleMacroChange(currentWeekIndex, 'giorniON', macro, val)}
-            color="indigo"
-          />
-          <WeekSetupCard
-            title="🧘 GIORNI OFF"
-            value={weeks[currentWeekIndex].giorniOFF.calorieTotal}
-            macros={weeks[currentWeekIndex].giorniOFF.macros}
-            onKcalChange={(val) => handleKcalChange(currentWeekIndex, 'giorniOFF', val)}
-            onMacroChange={(macro, val) => handleMacroChange(currentWeekIndex, 'giorniOFF', macro, val)}
-            color="emerald"
-          />
-        </div>
-
-        <div className="mt-8 md:mt-12 flex gap-3 md:gap-4">
+        {/* Sticky footer: safe area + AVANTI */}
+        <div className="setup-footer fixed left-0 right-0 bottom-0 z-10 px-3 sm:px-4 md:relative md:left-auto md:right-auto md:bottom-auto md:px-0 md:mt-8 flex gap-2 md:gap-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:pb-0 bg-[var(--background-main)] border-t border-[var(--border-color)] md:border-t-0 md:bg-transparent">
           <button
             disabled={step === 1}
             onClick={() => setStep(step - 1)}
-            className="flex-1 py-4 md:py-5 border-2 md:border-4 border-[var(--border-color)] rounded-2xl md:rounded-3xl font-black text-[var(--text-secondary)] hover:bg-[var(--background-main)] transition-all uppercase tracking-widest disabled:opacity-20 text-xs md:text-base"
+            className="flex-1 py-3.5 md:py-4 border border-[var(--border-color)] rounded-2xl font-bold text-[var(--text-secondary)] hover:bg-[var(--background-secondary)] transition-all uppercase tracking-wider disabled:opacity-30 text-xs md:text-sm"
           >
             Indietro
           </button>
           <button
             onClick={() => setStep(step + 1)}
-            className="flex-1 py-4 md:py-5 bg-brand-primary text-white rounded-2xl md:rounded-3xl font-black hover:bg-brand-primary-hover shadow-xl transition-all uppercase tracking-widest text-xs md:text-base"
+            className="setup-btn-next flex-1 py-3.5 md:py-4 bg-brand-primary text-white rounded-2xl font-bold hover:bg-brand-primary-hover shadow-lg transition-all uppercase tracking-wider text-xs md:text-sm"
           >
-            Continua
+            {step < 5 ? 'Avanti' : 'Prossima fase'}
           </button>
         </div>
       </div>
@@ -139,80 +176,73 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
     const isInvalid = totals.carboidrati !== 100 || totals.proteine !== 100 || totals.grassi !== 100;
 
     return (
-      <div className="max-w-4xl mx-auto bg-[var(--background-secondary)] p-5 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border border-[var(--border-color)] transition-colors">
-        <div className="mb-8 md:mb-10 flex flex-col sm:flex-row justify-between sm:items-end gap-4 md:gap-6">
-          <div>
-            <span className="text-brand-primary font-black text-sm uppercase tracking-[0.2em] mb-2 block">Fase 2: Distribuzione Pasti</span>
-            <h2 className="text-3xl md:text-4xl font-black text-[var(--text-primary)] tracking-tighter leading-tight truncate">{currentType.label}</h2>
+      <div className="setup-wizard max-w-4xl mx-auto rounded-xl md:rounded-2xl transition-colors">
+        <div className="setup-wizard-inner px-3 sm:px-4 md:px-10 pb-24 md:pb-12">
+          <div className="mb-5 md:mb-8">
+            <span className="text-brand-primary font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] block mb-1">FASE 2: DISTRIBUZIONE PASTI</span>
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white tracking-tight truncate">{currentType.label}</h1>
+            <div className="setup-progress-track mt-2 h-1.5 w-full rounded-full bg-[var(--background-main)] overflow-hidden">
+              <div
+                className="setup-progress-fill h-full rounded-full bg-brand-primary transition-all duration-300 ease-out"
+                style={{ width: `${progressPercent(step)}%` }}
+              />
+            </div>
           </div>
-          <span className="text-[var(--text-secondary)] text-xs font-black bg-[var(--background-main)] px-4 py-2 rounded-xl border border-[var(--border-color)] uppercase tracking-widest self-start sm:self-auto">Passo {step} / 12</span>
-        </div>
 
-        <div className="overflow-hidden border-2 border-[var(--border-color)] rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm mb-6 md:mb-10 bg-[var(--background-main)]">
-          <table className="w-full text-left table-fixed md:table-auto">
-            <thead className="bg-[var(--background-secondary)] border-b-2 border-[var(--border-color)]">
-              <tr>
-                <th className="pl-3 md:pl-8 py-3 md:py-6 text-[10px] md:text-xs font-black text-[var(--text-secondary)] uppercase tracking-widest w-1/4 md:w-auto">Pasto</th>
-                <th className="px-0.5 md:px-4 py-3 md:py-6 text-[10px] md:text-xs font-black text-indigo-600 uppercase text-center tracking-widest">Carbs %</th>
-                <th className="px-0.5 md:px-4 py-3 md:py-6 text-[10px] md:text-xs font-black text-rose-600 uppercase text-center tracking-widest">Prot %</th>
-                <th className="px-0.5 md:px-4 py-3 md:py-6 text-[10px] md:text-xs font-black text-amber-600 uppercase text-center tracking-widest">Fat %</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y-2 divide-[var(--border-color)]">
-              {currentType.distribuzioni.map((dist, idx) => (
-                <tr key={dist.pasto} className="hover:bg-[var(--background-main)] transition-colors">
-                  <td className="pl-3 md:pl-8 py-2 md:py-6 font-black text-[var(--text-primary)] uppercase text-xs md:text-base tracking-wider truncate pr-1">{dist.pasto}</td>
-                  <td className="px-0.5 md:px-4 py-2 md:py-6 text-center">
-                    <SetupInput
-                      value={dist.percentuali.carboidrati}
-                      onChange={(val) => handleDistributionChange(currentTypeIndex, idx, 'carboidrati', val)}
-                      color="indigo"
-                    />
+          <div key={step} className="setup-step-content overflow-hidden border border-[var(--border-color)] rounded-xl md:rounded-2xl mb-6 bg-[var(--background-main)] animate-fade-in">
+            <table className="w-full text-left table-fixed md:table-auto">
+              <thead className="bg-[var(--background-secondary)] border-b border-[var(--border-color)]">
+                <tr>
+                  <th className="pl-3 md:pl-6 py-2.5 md:py-4 text-[10px] md:text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider w-1/4 md:w-auto">Pasto</th>
+                  <th className="px-1 md:px-4 py-2.5 md:py-4 text-[10px] md:text-xs font-bold text-[var(--text-secondary)] uppercase text-center tracking-wider">Carbs %</th>
+                  <th className="px-1 md:px-4 py-2.5 md:py-4 text-[10px] md:text-xs font-bold text-[var(--text-secondary)] uppercase text-center tracking-wider">Prot %</th>
+                  <th className="px-1 md:px-4 py-2.5 md:py-4 text-[10px] md:text-xs font-bold text-[var(--text-secondary)] uppercase text-center tracking-wider">Fat %</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--border-color)]">
+                {currentType.distribuzioni.map((dist, idx) => (
+                  <tr key={dist.pasto} className="hover:bg-[var(--background-secondary)]/50 transition-colors">
+                    <td className="pl-3 md:pl-6 py-2 md:py-4 font-bold text-[var(--text-primary)] uppercase text-xs md:text-sm tracking-wider truncate pr-1">{dist.pasto}</td>
+                    <td className="px-1 md:px-4 py-2 md:py-4 text-center">
+                      <SetupInput value={dist.percentuali.carboidrati} onChange={(val) => handleDistributionChange(currentTypeIndex, idx, 'carboidrati', val)} />
+                    </td>
+                    <td className="px-1 md:px-4 py-2 md:py-4 text-center">
+                      <SetupInput value={dist.percentuali.proteine} onChange={(val) => handleDistributionChange(currentTypeIndex, idx, 'proteine', val)} />
+                    </td>
+                    <td className="px-1 md:px-4 py-2 md:py-4 text-center">
+                      <SetupInput value={dist.percentuali.grassi} onChange={(val) => handleDistributionChange(currentTypeIndex, idx, 'grassi', val)} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot className="bg-[var(--background-secondary)] border-t border-[var(--border-color)]">
+                <tr>
+                  <td className="pl-3 md:pl-6 py-2.5 md:py-4 font-bold uppercase text-[10px] md:text-xs tracking-wider text-[var(--text-secondary)]">Totale</td>
+                  <td className={`px-1 md:px-4 py-2.5 md:py-4 text-center font-bold text-sm md:text-xl tabular-nums ${totals.carboidrati === 100 ? 'text-[var(--text-primary)]' : 'text-brand-primary'}`}>
+                    {totals.carboidrati}%
                   </td>
-                  <td className="px-0.5 md:px-4 py-2 md:py-6 text-center">
-                    <SetupInput
-                      value={dist.percentuali.proteine}
-                      onChange={(val) => handleDistributionChange(currentTypeIndex, idx, 'proteine', val)}
-                      color="rose"
-                    />
+                  <td className={`px-1 md:px-4 py-2.5 md:py-4 text-center font-bold text-sm md:text-xl tabular-nums ${totals.proteine === 100 ? 'text-[var(--text-primary)]' : 'text-brand-primary'}`}>
+                    {totals.proteine}%
                   </td>
-                  <td className="px-0.5 md:px-4 py-2 md:py-6 text-center">
-                    <SetupInput
-                      value={dist.percentuali.grassi}
-                      onChange={(val) => handleDistributionChange(currentTypeIndex, idx, 'grassi', val)}
-                      color="amber"
-                    />
+                  <td className={`px-1 md:px-4 py-2.5 md:py-4 text-center font-bold text-sm md:text-xl tabular-nums ${totals.grassi === 100 ? 'text-[var(--text-primary)]' : 'text-brand-primary'}`}>
+                    {totals.grassi}%
                   </td>
                 </tr>
-              ))}
-            </tbody>
-            <tfoot className="bg-[#1A1A1A] text-white dark:bg-black">
-              <tr>
-                <td className="pl-3 md:px-8 py-3 md:py-8 font-black uppercase text-[10px] md:text-xs tracking-[0.2em] text-gray-300">Totale</td>
-                <td className={`px-0.5 md:px-4 py-3 md:py-8 text-center font-black text-base md:text-2xl ${totals.carboidrati === 100 ? 'text-emerald-400' : 'text-rose-500 underline decoration-4'}`}>
-                  {totals.carboidrati}%
-                </td>
-                <td className={`px-0.5 md:px-4 py-3 md:py-8 text-center font-black text-base md:text-2xl ${totals.proteine === 100 ? 'text-emerald-400' : 'text-rose-500 underline decoration-4'}`}>
-                  {totals.proteine}%
-                </td>
-                <td className={`px-0.5 md:px-4 py-3 md:py-8 text-center font-black text-base md:text-2xl ${totals.grassi === 100 ? 'text-emerald-400' : 'text-rose-500 underline decoration-4'}`}>
-                  {totals.grassi}%
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+              </tfoot>
+            </table>
+          </div>
+
+          {isInvalid && (
+            <div className="bg-brand-primary/10 text-brand-primary text-xs md:text-sm font-bold mb-4 p-3 md:p-4 rounded-xl border border-brand-primary/30 flex items-center gap-2 uppercase tracking-wide">
+              <span className="text-lg">⚠️</span> La somma deve essere 100%.
+            </div>
+          )}
         </div>
 
-        {isInvalid && (
-          <div className="bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 text-xs md:text-sm font-bold mb-6 p-4 md:p-6 rounded-2xl border-2 border-rose-200 dark:border-rose-900/50 flex items-center gap-2 md:gap-3 uppercase tracking-wide leading-relaxed">
-            <span className="text-xl md:text-2xl">⚠️</span> Somma != 100.
-          </div>
-        )}
-
-        <div className="flex gap-3 md:gap-6">
+        <div className="setup-footer fixed left-0 right-0 bottom-0 z-10 px-3 sm:px-4 md:relative md:left-auto md:right-auto md:bottom-auto md:px-0 md:mt-6 flex gap-2 md:gap-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:pb-0 bg-[var(--background-main)] border-t border-[var(--border-color)] md:border-t-0 md:bg-transparent">
           <button
             onClick={() => setStep(step - 1)}
-            className="flex-1 py-3 md:py-5 border-2 md:border-4 border-[var(--border-color)] rounded-xl md:rounded-3xl font-black text-[var(--text-secondary)] hover:bg-[var(--background-main)] transition-all uppercase tracking-widest text-xs md:text-sm touch-manipulation"
+            className="flex-1 py-3.5 md:py-4 border border-[var(--border-color)] rounded-2xl font-bold text-[var(--text-secondary)] hover:bg-[var(--background-secondary)] transition-all uppercase tracking-wider text-xs md:text-sm touch-manipulation"
           >
             Indietro
           </button>
@@ -222,9 +252,9 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
               if (step === 12) onComplete(weeks, tipologie);
               else setStep(step + 1);
             }}
-            className="flex-1 py-3 md:py-5 bg-brand-primary text-white rounded-xl md:rounded-3xl font-black hover:bg-brand-primary-hover shadow-xl transition-all uppercase tracking-widest disabled:opacity-50 disabled:bg-gray-500 text-xs md:text-sm touch-manipulation"
+            className="setup-btn-next flex-1 py-3.5 md:py-4 bg-brand-primary text-white rounded-2xl font-bold hover:bg-brand-primary-hover shadow-lg transition-all uppercase tracking-wider disabled:opacity-50 disabled:bg-gray-600 text-xs md:text-sm touch-manipulation"
           >
-            {step === 12 ? 'FINALIZZA' : 'PROSSIMO'}
+            {step === 12 ? 'Finalizza' : 'Prossimo'}
           </button>
         </div>
       </div>
@@ -235,47 +265,49 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
 };
 
 const WeekSetupCard: React.FC<{
-  title: string;
+  type: 'on' | 'off';
   value: number;
   macros: MacroSplit;
   onKcalChange: (v: number) => void;
   onMacroChange: (macro: 'carboidrati' | 'proteine' | 'grassi', v: number) => void;
-  color: string
-}> = ({ title, value, macros, onKcalChange, onMacroChange, color }) => {
-  const accent = color === 'indigo' ? 'indigo' : 'emerald';
-  const borderClass = accent === 'indigo' ? 'border-indigo-100 dark:border-indigo-900/40' : 'border-emerald-100 dark:border-emerald-900/40';
-  const bgClass = accent === 'indigo' ? 'bg-indigo-50 dark:bg-indigo-950/20' : 'bg-emerald-50 dark:bg-emerald-950/20';
-  const textClass = accent === 'indigo' ? 'text-indigo-900 dark:text-indigo-200' : 'text-emerald-900 dark:text-emerald-200';
+}> = ({ type, value, macros, onKcalChange, onMacroChange }) => {
+  const isOn = type === 'on';
+  const title = isOn ? 'GIORNI ON' : 'GIORNI OFF';
 
   return (
-    <div className={`p-4 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-2 ${borderClass} ${bgClass}`}>
-      <h3 className={`font-black uppercase tracking-widest text-xs md:text-sm mb-4 md:mb-6 ${textClass}`}>{title}</h3>
-      <div className="space-y-4 md:space-y-6">
+    <div className="p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] bg-[var(--background-secondary)] border border-[var(--border-color)]">
+      <div className="flex items-center gap-2 mb-4 md:mb-5">
+        {isOn ? (
+          <TrophyIcon className="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary shrink-0" />
+        ) : (
+          <MeditationIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--text-secondary)] shrink-0" />
+        )}
+        <h3 className="font-bold uppercase tracking-wider text-xs md:text-sm text-white">{title}</h3>
+      </div>
+      <div className="space-y-4 md:space-y-5">
         <div>
-          <label className="block text-[10px] md:text-[11px] font-black opacity-60 uppercase mb-1 md:mb-2 tracking-widest text-[var(--text-secondary)]">CALORIE TOTALI (Ricalcolate)</label>
-          <div className="w-full bg-[var(--background-main)] border-4 border-transparent rounded-2xl md:rounded-3xl px-4 md:px-6 py-3 md:py-4 text-2xl md:text-3xl font-black text-[var(--text-primary)] shadow-sm">
-            {Math.round(value)} <span className="text-xs md:text-sm opacity-40 font-bold">kcal</span>
+          <label className="block text-[10px] font-bold uppercase mb-1.5 tracking-wider text-[var(--text-secondary)]">Calorie totali</label>
+          <div className="w-full setup-kcal-box rounded-xl md:rounded-2xl px-4 py-3 md:py-4 flex items-baseline gap-1">
+            <span className="text-xl md:text-2xl font-bold text-white tabular-nums">{Math.round(value)}</span>
+            <span className="text-[10px] font-medium text-[var(--text-secondary)]">kcal</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 md:gap-4">
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
           <MacroInput
-            label="Carb (g)"
+            label="CARB (G)"
             value={macros.carboidrati.grammi}
             onChange={(v) => onMacroChange('carboidrati', v)}
-            color="indigo"
           />
           <MacroInput
-            label="Prot (g)"
+            label="PROT (G)"
             value={macros.proteine.grammi}
             onChange={(v) => onMacroChange('proteine', v)}
-            color="rose"
           />
           <MacroInput
-            label="Fat (g)"
+            label="FAT (G)"
             value={macros.grassi.grammi}
             onChange={(v) => onMacroChange('grassi', v)}
-            color="amber"
           />
         </div>
       </div>
@@ -283,38 +315,27 @@ const WeekSetupCard: React.FC<{
   );
 };
 
-const MacroInput: React.FC<{ label: string, value: number, onChange: (v: number) => void, color: string }> = ({ label, value, onChange, color }) => {
-  const colorMap: any = {
-    indigo: 'focus:border-indigo-500 text-indigo-700',
-    rose: 'focus:border-rose-500 text-rose-700',
-    amber: 'focus:border-amber-600 text-amber-700'
-  };
+const MacroInput: React.FC<{ label: string; value: number; onChange: (v: number) => void }> = ({ label, value, onChange }) => {
   return (
-    <div className="space-y-1 md:space-y-2">
-      <label className="block text-[10px] md:text-[11px] font-black opacity-60 uppercase tracking-tight text-center text-[var(--text-secondary)]">{label}</label>
+    <div className="space-y-1">
+      <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">{label}</label>
       <input
         type="number"
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value) || 0)}
-        className={`w-full bg-[var(--background-main)] border-2 border-[var(--border-color)] rounded-xl md:rounded-2xl px-1 md:px-4 py-2 md:py-3 text-center font-black text-lg md:text-xl outline-none transition-all ${colorMap[color]} touch-manipulation`}
+        className="setup-macro-input w-full bg-[var(--background-main)] border border-[var(--border-color)] rounded-lg px-2 py-2 md:py-2.5 text-center font-bold text-sm md:text-base text-[var(--text-primary)] outline-none transition-colors touch-manipulation"
       />
     </div>
   );
-}
+};
 
-const SetupInput: React.FC<{ value: number; onChange: (v: number) => void; color: 'indigo' | 'rose' | 'amber' }> = ({ value, onChange, color }) => {
-  const colorMap = {
-    indigo: 'focus:border-indigo-500 text-indigo-700 dark:text-indigo-300',
-    rose: 'focus:border-rose-500 text-rose-700 dark:text-rose-300',
-    amber: 'focus:border-amber-500 text-amber-700 dark:text-amber-300'
-  };
-
+const SetupInput: React.FC<{ value: number; onChange: (v: number) => void }> = ({ value, onChange }) => {
   return (
     <input
       type="number"
       value={value}
       onChange={(e) => onChange(parseInt(e.target.value) || 0)}
-      className={`w-12 md:w-24 bg-[var(--background-main)] border-2 border-[var(--border-color)] rounded-lg md:rounded-2xl px-0 md:px-3 py-2 md:py-3 text-center font-black text-base md:text-xl outline-none transition-all ${colorMap[color]} touch-manipulation`}
+      className="setup-macro-input w-12 md:w-20 bg-[var(--background-main)] border border-[var(--border-color)] rounded-lg px-1 md:px-2 py-2 text-center font-bold text-sm md:text-base text-[var(--text-primary)] outline-none transition-colors touch-manipulation mx-auto block"
     />
   );
 };
