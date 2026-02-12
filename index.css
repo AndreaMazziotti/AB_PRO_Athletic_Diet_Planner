@@ -273,3 +273,39 @@ html.dark .theme-toggle-btn:hover {
             drop-shadow(0 0 80px rgba(230, 0, 0, 0.12));
   }
 }
+
+/* Meal Solver: Componi Automaticamente button */
+.btn-componi-automatico {
+  background: linear-gradient(135deg, var(--brand-primary) 0%, #C2410C 50%, #7C3AED 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 8px 24px rgba(124, 58, 237, 0.35),
+    0 2px 8px rgba(230, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+.btn-componi-automatico:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 12px 28px rgba(124, 58, 237, 0.45),
+    0 4px 12px rgba(230, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+.btn-componi-automatico:active {
+  transform: translateY(0);
+}
+
+/* Meal Solver: loading shimmer e rotazione bacchetta */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer {
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 0.8s linear infinite;
+}
