@@ -15,7 +15,7 @@
 /* Header e Footer: nero neutro / grigio scurissimo (NO blue/navy) – logo bianco leggibile */
 :root {
   --header-bg: #0A0A0A;
-  --header-bg-scrolled: rgba(10, 10, 10, 0.98);
+  --header-bg-scrolled: #0A0A0A;
   --header-text: #FFFFFF;
   --header-text-muted: #D1D5DB;
   --header-border: #262626;
@@ -125,14 +125,15 @@ html.light .logo-header {
   background: var(--header-bg);
   border-bottom: 1px solid var(--header-border);
   box-shadow: var(--shadow-header);
-  transition: box-shadow 0.2s ease, backdrop-filter 0.2s ease, background 0.2s ease;
-  padding-top: env(safe-area-inset-top);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+  padding-top: max(0.75rem, env(safe-area-inset-top));
   z-index: 100;
+  /* Solido: nessuna trasparenza; copre correttamente la status bar iPhone */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 .app-header.is-scrolled {
   background: var(--header-bg-scrolled);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   box-shadow: var(--shadow-header-scrolled);
 }
 
@@ -140,6 +141,59 @@ html.light .logo-header {
 .shadow-card {
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
+}
+
+/* ============================================
+   Dashboard UI Hierarchy – Gruppo A: Controlli
+   ============================================ */
+.box-control {
+  border: 1px solid var(--border-control, var(--border-color));
+  box-shadow: var(--shadow-control, var(--shadow-card));
+}
+html.light .box-control {
+  --border-control: #D1D5DB;
+  --shadow-control: 0 1px 3px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+html.dark .box-control {
+  --border-control: rgba(230, 0, 0, 0.25);
+  --shadow-control: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.box-summary {
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-summary-end) 100%) !important;
+}
+html.light .box-summary {
+  --bg-summary-end: #F9FAFB;
+}
+html.dark .box-summary {
+  --bg-summary-end: #111111;
+}
+
+/* ============================================
+   Dashboard UI Hierarchy – Gruppo B: Pasti
+   ============================================ */
+.box-meal {
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--brand-primary);
+  background: var(--background-meal) !important;
+  box-shadow: var(--shadow-card);
+}
+html.light .box-meal {
+  --background-meal: #FFFFFF;
+}
+html.dark .box-meal {
+  --background-meal: #1E1E1E;
+}
+.box-meal:hover {
+  border-left-color: var(--brand-primary);
+}
+.box-meal-skipped {
+  border-left-color: var(--border-color) !important;
+}
+.box-meal-cheat {
+  border-left-color: rgba(168, 85, 247, 0.8) !important;
+}
+.box-meal-cheat:hover {
+  border-left-color: rgba(168, 85, 247, 0.9) !important;
 }
 
 /* Logo semplificato: crop per nascondere tagline (solo AB NUTRITION + DNA) */
