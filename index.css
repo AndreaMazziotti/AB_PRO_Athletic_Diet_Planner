@@ -126,6 +126,8 @@ html.light .logo-header {
   border-bottom: 1px solid var(--header-border);
   box-shadow: var(--shadow-header);
   transition: box-shadow 0.2s ease, backdrop-filter 0.2s ease, background 0.2s ease;
+  padding-top: env(safe-area-inset-top);
+  z-index: 100;
 }
 .app-header.is-scrolled {
   background: var(--header-bg-scrolled);

@@ -101,6 +101,18 @@ export const calculateMacroFromAlimento = (alimentoPer100g: any, quantity: numbe
   };
 };
 
+/** Formatta data YYYY-MM-DD in DD/MM/YYYY (italiano) via toLocaleDateString */
+export function formatDateIT(dateStr: string): string {
+  if (!dateStr || dateStr.length < 10) return dateStr;
+  try {
+    const d = new Date(dateStr + 'T12:00:00');
+    return d.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch {
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+}
+
 /** Funzione condivisa: calcola totali da alimenti selezionati. Usata da Dashboard e generatore. */
 export const computeTotalsFromItems = (
   alimenti: { id: string; per100g: { carboidrati: number; proteine: number; grassi: number } }[],

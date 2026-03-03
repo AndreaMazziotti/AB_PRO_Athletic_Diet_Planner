@@ -1,8 +1,9 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
+
 import { AppState, NomePasto, AlimentoSelezionato, PastoStatus } from '../types';
 import { PASTI_4, PASTI_5 } from '../constants';
-import { computeTotalsFromItems } from '../utils';
+import { computeTotalsFromItems, formatDateIT } from '../utils';
 import MealComposer from './MealComposer';
 
 function ChevronLeftIcon() {
@@ -195,16 +196,23 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4 md:space-y-8 pb-32 animate-in fade-in duration-300 px-3 md:px-6">
+    <div
+      className="w-full max-w-4xl mx-auto space-y-4 md:space-y-8 pb-32 animate-in fade-in duration-300"
+      style={{
+        paddingLeft: 'max(0.75rem, env(safe-area-inset-left))',
+        paddingRight: 'max(0.75rem, env(safe-area-inset-right))',
+      }}
+    >
       {/* Genera Piano Settimanale - solo modalità Facile */}
       {isFacileMode && onGenerateWeekPlan && (
-        <div className="bg-[var(--background-secondary)] p-4 md:p-6 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card">
+        <div className="bg-[var(--background-secondary)] p-4 md:p-6 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card flex flex-col items-center">
           <button
             type="button"
             onClick={onGenerateWeekPlan}
-            className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-[var(--brand-primary)] text-white font-black text-sm md:text-base uppercase tracking-widest shadow-lg hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-3"
+            className="w-[90%] max-w-[400px] py-4 md:py-5 px-4 rounded-xl md:rounded-2xl bg-[var(--brand-primary)] text-white font-black text-sm md:text-base uppercase tracking-widest shadow-lg hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-center"
+            style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}
           >
-            <span>COSTRUISCI PIANO SETTIMANALE</span>
+            <span className="leading-tight hyphens-auto" style={{ wordBreak: 'break-word' }}>COSTRUISCI PIANO SETTIMANALE</span>
           </button>
           <p className="text-[10px] md:text-xs text-[var(--text-secondary)] mt-2 text-center font-medium">
             Genera i pasti da oggi alla domenica con modelli certificati
@@ -212,23 +220,29 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
         </div>
       )}
 
-      {/* Date Navigation */}
-      <div className="flex items-center justify-between bg-[var(--background-secondary)] p-3 md:p-6 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card">
+      {/* Date Navigation - 3 colonne equidistanti: freccia | data | freccia */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center justify-items-center gap-2 md:gap-4 bg-[var(--background-secondary)] p-3 md:p-6 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card">
         <button
           onClick={() => navigateDate(-1)}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--text-primary)] opacity-70 hover:opacity-100 transition-opacity touch-manipulation"
+          className="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-[var(--text-primary)] opacity-70 hover:opacity-100 transition-opacity touch-manipulation justify-self-end"
           aria-label="Data precedente"
         >
           <ChevronLeftIcon />
         </button>
-        <div className="text-center flex flex-col items-center gap-2">
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => onDateChange(e.target.value)}
-            className="bg-transparent text-lg md:text-xl font-black text-brand-primary outline-none cursor-pointer text-center max-w-[160px] h-11"
-          />
-          <p className="text-xs md:text-sm font-bold uppercase text-[var(--text-secondary)] tracking-widest">Seleziona Data</p>
+        <div className="flex flex-col items-center justify-center min-w-0">
+          <div className="relative w-[140px] md:w-[180px] min-h-[44px] flex items-center justify-center">
+            <span className="text-lg md:text-xl font-black text-[var(--brand-primary)] pointer-events-none tabular-nums">
+              {formatDateIT(selectedDate)}
+            </span>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => onDateChange(e.target.value)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              aria-label="Seleziona data"
+            />
+          </div>
+          <p className="text-xs md:text-sm font-bold uppercase text-[var(--text-secondary)] tracking-widest mt-1">Seleziona Data</p>
           {isFacileMode && onManualDayTypeChange && (
             <div
               role="group"
@@ -264,7 +278,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
         </div>
         <button
           onClick={() => navigateDate(1)}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[var(--text-primary)] opacity-70 hover:opacity-100 transition-opacity touch-manipulation"
+          className="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center text-[var(--text-primary)] opacity-70 hover:opacity-100 transition-opacity touch-manipulation justify-self-start"
           aria-label="Data successiva"
         >
           <ChevronRightIcon />
@@ -320,7 +334,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
               <div className="space-y-1 md:space-y-1.5">
                 <span className="text-xs md:text-sm font-bold uppercase tracking-tight text-[var(--text-secondary)]">Riepilogo Giornaliero</span>
                 <div className="flex items-baseline gap-2 md:gap-3 flex-wrap">
-                  <div className="flex items-baseline gap-1.5 md:gap-2 px-4 py-2 rounded-xl bg-[var(--brand-primary)]">
+                  <div className="flex items-baseline gap-1.5 md:gap-2 px-4 py-2 rounded-xl bg-[var(--brand-primary)] text-white">
                     <span className="text-4xl md:text-6xl font-black tabular-nums tracking-tighter text-white">
                       {Math.round(dailyActualTotals.kcal)}
                     </span>

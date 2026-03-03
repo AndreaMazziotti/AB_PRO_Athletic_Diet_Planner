@@ -44,10 +44,16 @@ const Header: React.FC<HeaderProps> = ({ currentTab, setTab, isConfigured }) => 
 
   return (
     <header
-      className={`app-header sticky top-0 z-50 ${scrolled ? 'is-scrolled' : ''}`}
+      className={`app-header sticky top-0 z-[100] ${scrolled ? 'is-scrolled' : ''}`}
     >
       {/* Row 1: Logo (left) + Theme Toggle (right) */}
-      <div className="max-w-4xl mx-auto px-3 pl-3 pr-3 md:px-4 md:pr-6 py-3 flex items-center justify-between gap-3 min-h-[52px] md:min-h-[60px]">
+      <div
+        className="max-w-4xl mx-auto py-3 flex items-center justify-between gap-3 min-h-[52px] md:min-h-[60px]"
+        style={{
+          paddingLeft: 'max(0.75rem, env(safe-area-inset-left))',
+          paddingRight: 'max(0.75rem, env(safe-area-inset-right))',
+        }}
+      >
         <h1
           className="flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer select-none shrink-0"
           onClick={() => setTab('dashboard')}
@@ -81,7 +87,13 @@ const Header: React.FC<HeaderProps> = ({ currentTab, setTab, isConfigured }) => 
 
       {/* Row 2: Navigation (sotto, discreta) */}
       {isConfigured && (
-        <div className="max-w-4xl mx-auto px-3 pb-2 pt-0 md:px-4">
+        <div
+          className="max-w-4xl mx-auto pb-2 pt-0"
+          style={{
+            paddingLeft: 'max(0.75rem, env(safe-area-inset-left))',
+            paddingRight: 'max(0.75rem, env(safe-area-inset-right))',
+          }}
+        >
           <nav className="nav-bar flex items-center gap-0 overflow-x-auto no-scrollbar pt-3">
             <TabButton active={currentTab === 'dashboard'} onClick={() => setTab('dashboard')}>
               Dashboard

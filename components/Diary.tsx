@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AppState, PastoComposto } from '../types';
-import { calculateMacroFromAlimento } from '../utils';
+import { calculateMacroFromAlimento, formatDateIT } from '../utils';
 
 interface DiaryProps {
   state: AppState;
@@ -106,7 +106,7 @@ const Diary: React.FC<DiaryProps> = ({ state, onDateSelect }) => {
               />
               {/* Tooltip */}
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[var(--text-primary)] text-[var(--background-main)] text-[10px] font-black rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20 shadow-xl">
-                {date} {precision !== 'empty' && ` - ${precision.toUpperCase()}`}
+                {formatDateIT(date)}{precision !== 'empty' ? ` - ${precision.toUpperCase()}` : ''}
               </div>
             </div>
           );
