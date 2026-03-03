@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ currentTab, setTab, isConfigured }) => 
           <button
             type="button"
             onClick={toggleTheme}
-            className="theme-toggle-btn p-2 rounded-full text-[var(--text-primary)] transition-colors min-w-[40px] min-h-[40px] w-10 h-10 flex items-center justify-center touch-manipulation"
+            className="theme-toggle-btn p-2 rounded-full transition-colors min-w-[40px] min-h-[40px] w-10 h-10 flex items-center justify-center touch-manipulation"
             aria-label={theme === 'dark' ? 'Passa al tema chiaro' : 'Passa al tema scuro'}
           >
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}

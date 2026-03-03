@@ -123,7 +123,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
           {/* Header + progress bar */}
           <div className="mb-5 md:mb-8">
             <span className="text-brand-primary font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] block mb-1">FASE 1: ENERGIA E MACRO</span>
-            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white tracking-tight">Settimana {step}</h1>
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-[var(--text-primary)] tracking-tight">Settimana {step}</h1>
             <div className="setup-progress-track mt-2 h-1.5 w-full rounded-full bg-[var(--background-main)] overflow-hidden">
               <div
                 className="setup-progress-fill h-full rounded-full bg-brand-primary transition-all duration-300 ease-out"
@@ -180,7 +180,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
         <div className="setup-wizard-inner px-3 sm:px-4 md:px-10 pb-24 md:pb-12">
           <div className="mb-5 md:mb-8">
             <span className="text-brand-primary font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] block mb-1">FASE 2: DISTRIBUZIONE PASTI</span>
-            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white tracking-tight truncate">{currentType.label}</h1>
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-[var(--text-primary)] tracking-tight truncate">{currentType.label}</h1>
             <div className="setup-progress-track mt-2 h-1.5 w-full rounded-full bg-[var(--background-main)] overflow-hidden">
               <div
                 className="setup-progress-fill h-full rounded-full bg-brand-primary transition-all duration-300 ease-out"
@@ -252,7 +252,7 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
               if (step === 12) onComplete(weeks, tipologie);
               else setStep(step + 1);
             }}
-            className="setup-btn-next flex-1 py-3.5 md:py-4 bg-brand-primary text-white rounded-2xl font-bold hover:bg-brand-primary-hover shadow-lg transition-all uppercase tracking-wider disabled:opacity-50 disabled:bg-gray-600 text-xs md:text-sm touch-manipulation"
+            className="setup-btn-next flex-1 py-3.5 md:py-4 bg-brand-primary text-white rounded-2xl font-bold hover:bg-brand-primary-hover shadow-lg transition-all uppercase tracking-wider disabled:opacity-50 disabled:bg-[var(--ui-disabled-bg)] text-xs md:text-sm touch-manipulation"
           >
             {step === 12 ? 'Finalizza' : 'Prossimo'}
           </button>
@@ -282,13 +282,13 @@ const WeekSetupCard: React.FC<{
         ) : (
           <MeditationIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--text-secondary)] shrink-0" />
         )}
-        <h3 className="font-bold uppercase tracking-wider text-xs md:text-sm text-white">{title}</h3>
+        <h3 className="font-bold uppercase tracking-wider text-xs md:text-sm text-[var(--text-primary)]">{title}</h3>
       </div>
       <div className="space-y-4 md:space-y-5">
         <div>
           <label className="block text-[10px] font-bold uppercase mb-1.5 tracking-wider text-[var(--text-secondary)]">Calorie totali</label>
           <div className="w-full setup-kcal-box rounded-xl md:rounded-2xl px-4 py-3 md:py-4 flex items-baseline gap-1">
-            <span className="text-xl md:text-2xl font-bold text-white tabular-nums">{Math.round(value)}</span>
+            <span className="text-xl md:text-2xl font-bold text-[var(--text-primary)] tabular-nums">{Math.round(value)}</span>
             <span className="text-[10px] font-medium text-[var(--text-secondary)]">kcal</span>
           </div>
         </div>

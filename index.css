@@ -1,37 +1,80 @@
 /* ============================================
-   AB NUTRITION - Design System
-   Light / Dark mode via class on html (theme toggle + localStorage)
+   AB NUTRITION - Design System Speculare (Light/Dark)
+   Layout, spazi e border-radius identici; solo palette cambia.
    ============================================ */
 
-/* Brand accent (same in both modes) */
+/* Brand: identico in entrambi i temi */
 :root {
   --brand-primary: #E60000;
   --brand-primary-hover: #CC0000;
-  --brand-primary-disabled: #8C4A4A; /* muted red for disabled state */
+  --brand-primary-disabled: #8C4A4A;
+  --ui-disabled-bg: #374151;
+  --ui-disabled-text: #9ca3af;
 }
 
-/* Light Mode */
+/* Header e Footer: nero neutro / grigio scurissimo (NO blue/navy) – logo bianco leggibile */
+:root {
+  --header-bg: #0A0A0A;
+  --header-bg-scrolled: rgba(10, 10, 10, 0.98);
+  --header-text: #FFFFFF;
+  --header-text-muted: #D1D5DB;
+  --header-border: #262626;
+}
+
+/* Ombre: stessa struttura, opacità per tema */
+:root {
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-header: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-header-scrolled: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Light Mode – palette pagina (surface system: grigio pagina, card bianche) */
 html.light {
-  --background-main: #FAFAFA;
-  --background-secondary: #FFFFFF;
-  --text-primary: #1A1A1A;
-  --text-secondary: #666666;
-  --border-color: #E5E5E5;
+  --bg-page: #F3F4F6;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F9FAFB;
+  --text-main: #111827;
+  --text-muted: #4B5563;
+  --border-subtle: #E5E7EB;
+  /* Alias per compatibilità */
+  --background-main: var(--bg-page);
+  --background-secondary: var(--bg-card);
+  --text-primary: var(--text-main);
+  --text-secondary: var(--text-muted);
+  --border-color: var(--border-subtle);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-header: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-header-scrolled: 0 1px 3px rgba(0, 0, 0, 0.06);
+  /* Delta macro: verde foresta / rosso mattone (WCAG su bianco) */
+  --diff-ok: #166534;
+  --diff-over: #991B1B;
 }
 
-/* Dark Mode */
+/* Dark Mode – scala grigi neutri (no blue/slate) */
 html.dark {
-  --background-main: #121212;
-  --background-secondary: #2C2C2C;
-  --text-primary: #F5F5F5;
-  --text-secondary: #B3B3B3;
-  --border-color: #333333;
+  --bg-page: #121212;
+  --bg-card: #1A1A1A;
+  --bg-elevated: #1A1A1A;
+  --text-main: #FFFFFF;
+  --text-muted: #B3B3B3;
+  --border-subtle: #333333;
+  /* Alias */
+  --background-main: var(--bg-page);
+  --background-secondary: var(--bg-card);
+  --text-primary: var(--text-main);
+  --text-secondary: var(--text-muted);
+  --border-color: var(--border-subtle);
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-header: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-header-scrolled: 0 1px 3px rgba(0, 0, 0, 0.15);
+  --diff-ok: #166534;
+  --diff-over: #991B1B;
 }
 
-/* Base: apply semantic tokens to body when using utility classes */
+/* Base */
 body {
-  background-color: var(--background-main);
-  color: var(--text-primary);
+  background-color: var(--bg-page);
+  color: var(--text-main);
 }
 
 /* ============================================
@@ -75,37 +118,26 @@ html.light .logo-header {
 }
 
 /* ============================================
-   Header: sfondo solido, shadow sottile, coerente in scroll
+   Header & Nav: SEMPRE scuri (antracite/nero) in entrambi i temi
+   per logo bianco "NUTRITION" sempre leggibile
    ============================================ */
 .app-header {
-  background: var(--background-secondary);
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease, backdrop-filter 0.2s ease;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: var(--shadow-header);
+  transition: box-shadow 0.2s ease, backdrop-filter 0.2s ease, background 0.2s ease;
 }
 .app-header.is-scrolled {
-  background: rgba(44, 44, 44, 0.92);
+  background: var(--header-bg-scrolled);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-html.light .app-header {
-  background: #FFFFFF;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-html.light .app-header.is-scrolled {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-header-scrolled);
 }
 
-/* Card: bordo 1px, ombra stretta e profonda (meno spread) */
+/* Card: light = bianco + bordo 1px #E5E7EB (var --border-color) per gerarchia visiva */
 .shadow-card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-html.dark .shadow-card {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
 }
 
 /* Logo semplificato: crop per nascondere tagline (solo AB NUTRITION + DNA) */
@@ -134,16 +166,16 @@ html.light .logo-header-simplified {
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.15));
 }
 
-/* Nav: bordo sottile, contrasto WCAG, indicatore attivo pulito */
+/* Nav: stesso stile su header scuro in entrambi i temi */
 .app-header .nav-bar {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--header-border);
 }
 .nav-tab {
   padding: 0.5rem 0.875rem;
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: var(--text-secondary);
+  color: var(--header-text-muted);
   background: transparent;
   border: none;
   border-radius: 0;
@@ -168,20 +200,30 @@ html.light .logo-header-simplified {
   background: var(--brand-primary);
   border-radius: 2px;
 }
-html.light .nav-tab {
-  color: #4B5563;
+.theme-toggle-btn {
+  color: var(--header-text);
 }
-html.light .nav-tab:hover {
-  color: #374151;
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
-html.light .nav-tab.is-active {
-  color: var(--brand-primary);
+
+/* Footer: nero #0A0A0A, nessuna barra bianca sotto – Safe Area stessa tonalità */
+.app-footer {
+  margin-bottom: 0;
+  background: var(--header-bg);
+  color: var(--header-text-muted);
+  border-top: 1px solid var(--header-border);
+  padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
 }
-html.light .theme-toggle-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
+.app-footer p {
+  color: var(--header-text-muted);
 }
-html.dark .theme-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+.app-footer .logo-header {
+  opacity: 0.9;
+}
+
+.app-root {
+  padding-bottom: 0;
 }
 
 /* ============================================
@@ -314,12 +356,14 @@ html.dark .theme-toggle-btn:hover {
 /* Pulsante Componi automaticamente – solido, full-width */
 .composer-btn-auto {
   background: var(--brand-primary);
-  box-shadow: 0 2px 8px rgba(230, 0, 0, 0.25);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 0 20px rgba(230, 0, 0, 0.15);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
 }
 .composer-btn-auto:hover:not(:disabled) {
   background: var(--brand-primary-hover);
-  box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 0 28px rgba(230, 0, 0, 0.25);
+  transform: scale(1.02);
 }
 .composer-btn-auto:active:not(:disabled) {
   transform: scale(0.98);
@@ -327,8 +371,18 @@ html.dark .theme-toggle-btn:hover {
 
 /* Stato disabilitato: grigio scuro, testo sotto “Aggiungi almeno 3 ingredienti…” */
 .composer-btn-disabled {
-  background: #374151;
-  color: #9ca3af;
+  background: #D1D5DB;
+  color: #374151 !important;
+}
+.composer-btn-disabled-icon {
+  color: #374151;
+}
+html.dark .composer-btn-disabled {
+  background: #333333;
+  color: #E5E7EB !important;
+}
+html.dark .composer-btn-disabled-icon {
+  color: #E5E7EB;
 }
 
 /* Input ricerca: bordo accento 1px (no outline spesso) */
@@ -356,6 +410,76 @@ html.dark .theme-toggle-btn:hover {
   font-weight: 300;
   width: 1.75rem;
   height: 1.75rem;
+}
+
+/* Icona Chiudi (X) nel banner rosso: sempre bianca e ben visibile */
+.composer-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+.composer-close-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  color: #FFFFFF;
+}
+
+/* Input grammi (spin buttons e bordo visibile) */
+.composer-gram-input {
+  border: 1px solid #D1D5DB;
+}
+.composer-gram-input:focus {
+  border-color: var(--brand-primary);
+  outline: none;
+}
+html.dark .composer-gram-input {
+  border-color: var(--border-color);
+}
+/* Spin buttons: grigio antracite coerente con il testo */
+.composer-gram-input::-webkit-outer-spin-button,
+.composer-gram-input::-webkit-inner-spin-button {
+  opacity: 1;
+  color: #374151;
+}
+html.dark .composer-gram-input::-webkit-outer-spin-button,
+html.dark .composer-gram-input::-webkit-inner-spin-button {
+  color: var(--text-secondary);
+}
+
+/* Sfondo Rosso Brand: testo sempre BIANCO PURO (#FFFFFF) – valori, etichette, delta */
+[class*="bg-brand-primary"],
+.composer-stat-kcal {
+  color: #FFFFFF;
+}
+.composer-stat-kcal {
+  background: var(--brand-primary);
+}
+.composer-stat-kcal-label,
+.composer-stat-kcal-values,
+.composer-stat-kcal-target,
+.composer-stat-kcal .composer-stat-diff {
+  color: #FFFFFF !important;
+}
+
+/* Box macro (Carbs/Prot/Fat): etichette grigio scuro alto contrasto */
+.composer-stat-cell {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+.composer-stat-cell-label {
+  color: #374151;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+html.light .composer-stat-cell {
+  background: #FFFFFF;
+  color: #111827;
+}
+html.light .composer-stat-cell-label {
+  color: #374151;
+}
+html.dark .composer-stat-cell-label {
+  color: #9CA3AF;
 }
 
 /* Meal Solver: loading shimmer e rotazione bacchetta */
@@ -386,17 +510,41 @@ html.dark .theme-toggle-btn:hover {
 }
 
 .setup-kcal-box {
-  background: var(--background-main);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-color);
 }
-html.dark .setup-kcal-box {
-  background: rgba(0, 0, 0, 0.4);
-}
 
+.setup-macro-input {
+  color: var(--text-primary);
+}
+.setup-macro-input::placeholder {
+  color: var(--text-secondary);
+}
 .setup-macro-input:focus {
   border-color: var(--brand-primary);
   box-shadow: 0 0 0 1px var(--brand-primary);
   outline: none;
+}
+
+/* Setup Light Mode: input leggibili (sfondo grigio quasi bianco, bordo, testo nero) */
+html.light .setup-kcal-box {
+  background: #F9FAFB;
+  border: 1px solid #D1D5DB;
+}
+html.light .setup-kcal-box span {
+  color: #111827;
+}
+html.light .setup-macro-input {
+  background: #F9FAFB !important;
+  border: 1px solid #D1D5DB !important;
+  color: #111827 !important;
+}
+html.light .setup-macro-input::placeholder {
+  color: #9CA3AF;
+}
+html.light .setup-macro-input:focus {
+  border-color: var(--brand-primary) !important;
+  background: #FFFFFF !important;
 }
 
 .setup-btn-next {
@@ -409,4 +557,53 @@ html.dark .setup-kcal-box {
 }
 .animate-fade-in {
   animation: setup-fade-in 0.25s ease-out forwards;
+}
+
+/* ============================================
+   Food Manager – Card layout, certificati, tema
+   ============================================ */
+
+.food-manager {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+@media (min-width: 768px) {
+  .food-manager {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.food-card {
+  border: 1px solid var(--border-color);
+}
+html.light .food-card {
+  background: #FFFFFF;
+  border-color: #E5E7EB;
+}
+html.dark .food-card {
+  background: #1E1E1E;
+  border-color: #333333;
+}
+
+.food-card-verified {
+  flex-shrink: 0;
+}
+
+.food-manager-search {
+  border-width: 1px;
+}
+
+/* Edit = grigio scuro (light), Delete = rosso (light) */
+.food-manager-btn-edit {
+  color: #374151;
+}
+html.dark .food-manager-btn-edit {
+  color: var(--text-secondary);
+}
+.food-manager-btn-delete {
+  color: #DC2626;
+}
+html.dark .food-manager-btn-delete {
+  color: #F87171;
 }

@@ -1,7 +1,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { AppState, NomePasto, AlimentoSelezionato, PastoStatus } from '../types';
-import { calculateMacroFromAlimento } from '../utils';
+import { PASTI_4, PASTI_5 } from '../constants';
+import { computeTotalsFromItems } from '../utils';
 import MealComposer from './MealComposer';
 
 function ChevronLeftIcon() {
@@ -19,35 +20,124 @@ function ChevronRightIcon() {
   );
 }
 
+function TrophyBadgeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+      <path d="M4 22h16" />
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+    </svg>
+  );
+}
+
+function MeditationBadgeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v2M12 19v2M3 12h2M19 12h2" />
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
 interface DailyPlannerProps {
   state: AppState;
   selectedDate: string;
   onDateChange: (date: string) => void;
   onSaveMeal: (date: string, week: number, type: string, meal: NomePasto, items: AlimentoSelezionato[], status?: PastoStatus) => void;
+  onManualDayTypeChange?: (date: string, type: 'ON' | 'OFF') => void;
+  onGenerateWeekPlan?: () => void;
 }
 
-const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDateChange, onSaveMeal }) => {
-  // Trova il setup per la data selezionata o usa il default
-  const dailySetup = useMemo(() =>
-    state.dailySetups.find(s => s.date === selectedDate) || { settimana: 1, tipologiaGiornata: state.tipologie[0].tipo },
-    [state.dailySetups, selectedDate, state.tipologie]);
+const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDateChange, onSaveMeal, onManualDayTypeChange, onGenerateWeekPlan }) => {
+  const isFacileMode = state.setupMode === 'facile' && state.easy_mode_targets && state.facilePreferences;
+
+  const isOnDayForDate = useMemo(() => {
+    if (!isFacileMode || !state.facilePreferences) return true;
+    const d = new Date(selectedDate + 'T12:00:00');
+    const weekday = d.getDay();
+    return state.facilePreferences.onDays.includes(weekday);
+  }, [isFacileMode, selectedDate, state.facilePreferences]);
+
+  const manualOverride = state.manualDayTypeOverrides?.[selectedDate];
+  const effectiveIsOn = manualOverride !== undefined ? manualOverride === 'ON' : isOnDayForDate;
+
+  const dayTypeForFacile = useMemo(() => {
+    if (!isFacileMode || !state.tipologie.length) return state.tipologie[0]?.tipo ?? '';
+    const onT = state.tipologie.find(t => t.categoria === 'ON')?.tipo;
+    const offT = state.tipologie.find(t => t.categoria === 'OFF')?.tipo;
+    return (effectiveIsOn ? onT ?? offT : offT ?? onT) ?? state.tipologie[0].tipo;
+  }, [isFacileMode, effectiveIsOn, state.tipologie]);
+
+  const facileDailyMacroConfig = useMemo(() => {
+    if (!isFacileMode || !state.easy_mode_targets) return null;
+    const profile = effectiveIsOn ? state.easy_mode_targets.ON : state.easy_mode_targets.OFF;
+    let calorieTotal = 0;
+    let carbTotal = 0;
+    let protTotal = 0;
+    let fatTotal = 0;
+    for (const key of Object.keys(profile) as NomePasto[]) {
+      const m = profile[key];
+      if (m) {
+        calorieTotal += m.kcal;
+        carbTotal += m.carboidrati;
+        protTotal += m.proteine;
+        fatTotal += m.grassi;
+      }
+    }
+    return {
+      calorieTotal,
+      macros: {
+        carboidrati: { grammi: carbTotal, kcal: carbTotal * 4 },
+        proteine: { grammi: protTotal, kcal: protTotal * 4 },
+        grassi: { grammi: fatTotal, kcal: fatTotal * 9 },
+      },
+    };
+  }, [isFacileMode, effectiveIsOn, state.easy_mode_targets]);
+
+  const dailySetup = useMemo(() => {
+    const found = state.dailySetups.find(s => s.date === selectedDate);
+    if (found) return found;
+    return {
+      settimana: 1,
+      tipologiaGiornata: (isFacileMode ? dayTypeForFacile : state.tipologie[0]?.tipo) || state.tipologie[0]?.tipo || ''
+    };
+  }, [state.dailySetups, selectedDate, state.tipologie, isFacileMode, dayTypeForFacile]);
 
   const [selectedWeek, setSelectedWeek] = useState(dailySetup.settimana);
   const [selectedDayType, setSelectedDayType] = useState<string>(dailySetup.tipologiaGiornata);
   const [activeMealComposer, setActiveMealComposer] = useState<NomePasto | null>(null);
 
-  // Sincronizza lo stato locale quando cambia la data
   useEffect(() => {
     setSelectedWeek(dailySetup.settimana);
     setSelectedDayType(dailySetup.tipologiaGiornata);
   }, [dailySetup]);
 
-  const currentWeek = state.settimane.find(w => w.numero === selectedWeek)!;
-  const dayTypeConfig = state.tipologie.find(t => t.tipo === selectedDayType)!;
-  const isON = dayTypeConfig.categoria === 'ON';
-  const weekMacroConfig = isON ? currentWeek.giorniON : currentWeek.giorniOFF;
+  useEffect(() => {
+    if (isFacileMode && dayTypeForFacile) setSelectedDayType(dayTypeForFacile);
+  }, [isFacileMode, dayTypeForFacile]);
+
+  const currentWeek = state.settimane.find(w => w.numero === selectedWeek) ?? state.settimane[0];
+  const dayTypeConfig = state.tipologie.find(t => t.tipo === selectedDayType) ?? state.tipologie[0];
+  const dayTypeConfigSafe = dayTypeConfig ?? state.tipologie[0];
+  const isON = dayTypeConfig?.categoria === 'ON';
+  const weekMacroConfig = currentWeek ? (isON ? currentWeek.giorniON : currentWeek.giorniOFF) : { calorieTotal: 0, macros: { carboidrati: { grammi: 0 }, proteine: { grammi: 0 }, grassi: { grammi: 0 } } };
+  const effectiveMacroConfig = facileDailyMacroConfig ?? weekMacroConfig;
+
+  const mealsToShow = useMemo(() => {
+    if (isFacileMode && state.facilePreferences) {
+      return state.facilePreferences.mealFrequency === 5 ? [...PASTI_5] : [...PASTI_4];
+    }
+    return (dayTypeConfigSafe?.distribuzioni?.map(d => d.pasto) ?? PASTI_4) as NomePasto[];
+  }, [isFacileMode, state.facilePreferences, dayTypeConfigSafe]);
 
   const getMealTarget = (meal: NomePasto) => {
+    if (isFacileMode && state.easy_mode_targets) {
+      const profile = effectiveIsOn ? state.easy_mode_targets.ON : state.easy_mode_targets.OFF;
+      const t = profile[meal];
+      if (t) return { carboidrati: t.carboidrati, proteine: t.proteine, grassi: t.grassi, kcal: t.kcal };
+    }
     const dist = dayTypeConfig.distribuzioni.find(d => d.pasto === meal)!;
     const carbs = (weekMacroConfig.macros.carboidrati.grammi * dist.percentuali.carboidrati) / 100;
     const prot = (weekMacroConfig.macros.proteine.grammi * dist.percentuali.proteine) / 100;
@@ -61,22 +151,12 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
   };
 
   const calculateItemsTotals = (items: AlimentoSelezionato[]) => {
-    return items.reduce((acc, curr) => {
-      const a = state.alimenti.find(x => x.id === curr.alimentoId);
-      if (!a) return acc;
-      const m = calculateMacroFromAlimento(a.per100g, curr.quantita);
-      return {
-        carboidrati: acc.carboidrati + m.carboidrati,
-        proteine: acc.proteine + m.proteine,
-        grassi: acc.grassi + m.grassi,
-        kcal: acc.kcal + m.kcal,
-      };
-    }, { carboidrati: 0, proteine: 0, grassi: 0, kcal: 0 });
+    return computeTotalsFromItems(state.alimenti, items);
   };
 
   const dailyActualTotals = useMemo(() => {
-    return dayTypeConfig.distribuzioni.reduce((acc, dist) => {
-      const mealData = state.pastiSalvati.find(p => p.data === selectedDate && p.nomePasto === dist.pasto);
+    return mealsToShow.reduce((acc, pasto) => {
+      const mealData = state.pastiSalvati.find(p => p.data === selectedDate && p.nomePasto === pasto);
       if (!mealData || mealData.status === 'skipped') return acc;
       const totals = calculateItemsTotals(mealData.alimenti);
       return {
@@ -86,7 +166,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
         kcal: acc.kcal + totals.kcal,
       };
     }, { carboidrati: 0, proteine: 0, grassi: 0, kcal: 0 });
-  }, [state.pastiSalvati, selectedDate, dayTypeConfig, state.alimenti]);
+  }, [state.pastiSalvati, selectedDate, mealsToShow, state.alimenti]);
 
   if (activeMealComposer) {
     const target = getMealTarget(activeMealComposer);
@@ -116,6 +196,22 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-4 md:space-y-8 pb-32 animate-in fade-in duration-300 px-3 md:px-6">
+      {/* Genera Piano Settimanale - solo modalità Facile */}
+      {isFacileMode && onGenerateWeekPlan && (
+        <div className="bg-[var(--background-secondary)] p-4 md:p-6 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card">
+          <button
+            type="button"
+            onClick={onGenerateWeekPlan}
+            className="w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-[var(--brand-primary)] text-white font-black text-sm md:text-base uppercase tracking-widest shadow-lg hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-3"
+          >
+            <span>COSTRUISCI PIANO SETTIMANALE</span>
+          </button>
+          <p className="text-[10px] md:text-xs text-[var(--text-secondary)] mt-2 text-center font-medium">
+            Genera i pasti da oggi alla domenica con modelli certificati
+          </p>
+        </div>
+      )}
+
       {/* Date Navigation */}
       <div className="flex items-center justify-between bg-[var(--background-secondary)] p-3 md:p-6 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card">
         <button
@@ -125,14 +221,46 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
         >
           <ChevronLeftIcon />
         </button>
-        <div className="text-center">
+        <div className="text-center flex flex-col items-center gap-2">
           <input
             type="date"
             value={selectedDate}
             onChange={(e) => onDateChange(e.target.value)}
             className="bg-transparent text-lg md:text-xl font-black text-brand-primary outline-none cursor-pointer text-center max-w-[160px] h-11"
           />
-          <p className="text-xs md:text-sm font-bold uppercase text-[var(--text-secondary)] tracking-widest mt-1">Seleziona Data</p>
+          <p className="text-xs md:text-sm font-bold uppercase text-[var(--text-secondary)] tracking-widest">Seleziona Data</p>
+          {isFacileMode && onManualDayTypeChange && (
+            <div
+              role="group"
+              aria-label="Tipo giornata"
+              className="inline-flex rounded-xl overflow-hidden border-2 border-[var(--border-color)] bg-[var(--background-main)]"
+            >
+              <button
+                type="button"
+                onClick={() => onManualDayTypeChange(selectedDate, 'ON')}
+                className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-widest transition-all duration-200 ${
+                  effectiveIsOn
+                    ? 'bg-brand-primary text-white'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--background-secondary)]'
+                }`}
+              >
+                <TrophyBadgeIcon className="w-4 h-4" />
+                <span>Allenamento</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onManualDayTypeChange(selectedDate, 'OFF')}
+                className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-widest transition-all duration-200 ${
+                  !effectiveIsOn
+                    ? 'bg-[#374151] text-white'
+                    : 'text-[var(--text-secondary)] hover:bg-[var(--background-secondary)]'
+                }`}
+              >
+                <MeditationBadgeIcon className="w-4 h-4" />
+                <span>Riposo</span>
+              </button>
+            </div>
+          )}
         </div>
         <button
           onClick={() => navigateDate(1)}
@@ -143,7 +271,8 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
         </button>
       </div>
 
-      {/* Selector Section */}
+      {/* Selector Section - nascosto in modalità Facile (valori costanti) */}
+      {!isFacileMode && (
       <div className="bg-[var(--background-secondary)] p-3 md:p-8 rounded-xl md:rounded-[2rem] border border-[var(--border-color)] shadow-card overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           <div className="space-y-3 md:space-y-4">
@@ -178,23 +307,32 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
           </div>
         </div>
       </div>
+      )}
 
       {/* Main Stats Header - Riepilogo Giornaliero */}
       <div className="p-3 md:p-8 rounded-xl md:rounded-[2.5rem] border border-[var(--border-color)] bg-[var(--background-secondary)] shadow-card transition-all overflow-hidden">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-4 md:gap-10">
-          <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-start">
+            <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-start">
             <div className="flex items-center gap-3 md:gap-4">
               <div className="bg-[var(--background-main)] p-2.5 md:p-5 rounded-xl md:rounded-3xl border border-[var(--border-color)] shrink-0 flex items-center justify-center">
-                {isON ? <FlameIcon /> : <RestIcon />}
+                {(isFacileMode ? effectiveIsOn : isON) ? <FlameIcon /> : <RestIcon />}
               </div>
               <div className="space-y-1 md:space-y-1.5">
                 <span className="text-xs md:text-sm font-bold uppercase tracking-tight text-[var(--text-secondary)]">Riepilogo Giornaliero</span>
-                <div className="flex items-baseline gap-1.5 md:gap-2">
-                  <span className="text-4xl md:text-6xl font-black text-[var(--text-primary)] tabular-nums tracking-tighter">
-                    {Math.round(dailyActualTotals.kcal)}
-                  </span>
-                  <span className="text-sm md:text-base font-medium text-[var(--text-secondary)]">
-                    / {weekMacroConfig.calorieTotal} Kcal
+                <div className="flex items-baseline gap-2 md:gap-3 flex-wrap">
+                  <div className="flex items-baseline gap-1.5 md:gap-2 px-4 py-2 rounded-xl bg-[var(--brand-primary)]">
+                    <span className="text-4xl md:text-6xl font-black tabular-nums tracking-tighter text-white">
+                      {Math.round(dailyActualTotals.kcal)}
+                    </span>
+                    <span className="text-sm md:text-base font-semibold text-white/95">
+                      / {effectiveMacroConfig.calorieTotal} Kcal
+                    </span>
+                  </div>
+                  <span className={`text-sm md:text-base font-bold tabular-nums self-center ${Math.round(dailyActualTotals.kcal - effectiveMacroConfig.calorieTotal) > 0 ? 'text-[var(--diff-over)]' : Math.round(dailyActualTotals.kcal - effectiveMacroConfig.calorieTotal) < 0 ? 'text-[var(--diff-ok)]' : 'text-[var(--text-secondary)]'}`}>
+                    {(() => {
+                      const d = Math.round(dailyActualTotals.kcal - effectiveMacroConfig.calorieTotal);
+                      return d > 0 ? `+${d}` : d === 0 ? '0' : `${d}`;
+                    })()}{' '}kcal
                   </span>
                 </div>
               </div>
@@ -202,34 +340,38 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
           </div>
 
           <div className="grid grid-cols-3 gap-1.5 w-full lg:w-auto min-w-0">
-            <HeaderMacroBox label="Carbs" actual={dailyActualTotals.carboidrati} target={weekMacroConfig.macros.carboidrati.grammi} />
-            <HeaderMacroBox label="Prot" actual={dailyActualTotals.proteine} target={weekMacroConfig.macros.proteine.grammi} />
-            <HeaderMacroBox label="FAT" actual={dailyActualTotals.grassi} target={weekMacroConfig.macros.grassi.grammi} />
+            <HeaderMacroBox label="Carbs" actual={dailyActualTotals.carboidrati} target={effectiveMacroConfig.macros.carboidrati.grammi} />
+            <HeaderMacroBox label="Prot" actual={dailyActualTotals.proteine} target={effectiveMacroConfig.macros.proteine.grammi} />
+            <HeaderMacroBox label="FAT" actual={dailyActualTotals.grassi} target={effectiveMacroConfig.macros.grassi.grammi} />
           </div>
         </div>
       </div>
 
-      {/* Meals Grid */}
+      {/* Meals Grid - ordine cronologico (4 o 5 pasti in base a facilePreferences) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
-        {dayTypeConfig.distribuzioni.map(dist => {
-          const target = getMealTarget(dist.pasto);
-          const mealData = state.pastiSalvati.find(p => p.data === selectedDate && p.nomePasto === dist.pasto);
+        {mealsToShow.map(pasto => {
+          const target = getMealTarget(pasto);
+          const mealData = state.pastiSalvati.find(p => p.data === selectedDate && p.nomePasto === pasto);
           const actual = calculateItemsTotals(mealData?.status === 'regular' ? mealData.alimenti : []);
           const status = mealData?.status || 'regular';
+          const isAutoGen = mealData?.isAutoGenerated ?? false;
 
           return (
-            <div key={dist.pasto} className={`bg-[var(--background-secondary)] rounded-xl md:rounded-[2.5rem] border shadow-card flex flex-col transition-all relative overflow-hidden ${status === 'skipped' ? 'border-[var(--border-color)] grayscale opacity-70' :
+            <div key={pasto} className={`bg-[var(--background-secondary)] rounded-xl md:rounded-[2.5rem] border shadow-card flex flex-col transition-all relative overflow-hidden ${status === 'skipped' ? 'border-[var(--border-color)] grayscale opacity-70' :
               status === 'cheat' ? 'border-purple-500/60' :
                 'border-[var(--border-color)] hover:border-brand-primary'
               }`}>
-              {status === 'cheat' && <div className="absolute top-0 right-0 bg-purple-600 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest z-10">Cheat Meal</div>}
+              {status === 'cheat' && <div className="absolute top-0 right-0 bg-brand-primary text-white text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest z-10">Cheat Meal</div>}
               {status === 'skipped' && <div className="absolute top-0 right-0 bg-gray-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest z-10">Saltato</div>}
+              {isAutoGen && status !== 'skipped' && (
+                <div className="absolute top-2 right-2 md:top-3 md:right-3 w-6 h-6 rounded-full bg-[var(--brand-primary)] text-white flex items-center justify-center text-[10px] font-black z-10" title="Generato automaticamente">A</div>
+              )}
 
               <div className="px-3 md:px-8 py-3 md:py-6 border-b border-[var(--border-color)] flex justify-between items-center bg-[var(--background-main)]/40">
-                <span className="font-black text-brand-primary uppercase tracking-widest text-base md:text-lg truncate mr-2">{dist.pasto}</span>
-                <div className="flex items-baseline gap-1.5 shrink-0">
-                  <span className="text-xl md:text-2xl font-black tabular-nums text-[var(--text-primary)]">{status === 'skipped' ? 0 : Math.round(actual.kcal)}</span>
-                  <span className="text-sm md:text-base font-medium text-[var(--text-secondary)]">/ {target.kcal} Kcal</span>
+                <span className="font-black text-brand-primary uppercase tracking-widest text-base md:text-lg truncate mr-2">{pasto}</span>
+                <div className="flex items-baseline gap-1.5 shrink-0 px-3 py-1.5 rounded-xl bg-[var(--brand-primary)] text-white">
+                  <span className="text-xl md:text-2xl font-black tabular-nums text-white">{status === 'skipped' ? 0 : Math.round(actual.kcal)}</span>
+                  <span className="text-sm md:text-base font-semibold text-white/90">/ {target.kcal} Kcal</span>
                 </div>
               </div>
 
@@ -261,14 +403,14 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
 
                 <div className="grid grid-cols-2 gap-3 md:gap-4">
                   <button
-                    onClick={() => onSaveMeal(selectedDate, selectedWeek, selectedDayType, dist.pasto, [], status === 'skipped' ? 'regular' : 'skipped')}
+                    onClick={() => onSaveMeal(selectedDate, selectedWeek, selectedDayType, pasto, [], status === 'skipped' ? 'regular' : 'skipped')}
                     className={`h-11 md:h-12 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-bold uppercase tracking-widest border transition-all active:scale-95 touch-manipulation ${status === 'skipped' ? 'bg-gray-600 border-gray-600 text-white' : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--background-main)] bg-transparent'
                       }`}
                   >
                     {status === 'skipped' ? 'Ripristina' : 'Salta'}
                   </button>
                   <button
-                    onClick={() => onSaveMeal(selectedDate, selectedWeek, selectedDayType, dist.pasto, mealData?.alimenti || [], status === 'cheat' ? 'regular' : 'cheat')}
+                    onClick={() => onSaveMeal(selectedDate, selectedWeek, selectedDayType, pasto, mealData?.alimenti || [], status === 'cheat' ? 'regular' : 'cheat')}
                     className={`h-11 md:h-12 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-bold uppercase tracking-widest border transition-all active:scale-95 touch-manipulation ${status === 'cheat' ? 'border-purple-500 text-purple-400 bg-purple-500/10' : 'border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--background-main)] bg-transparent'
                       }`}
                   >
@@ -279,7 +421,7 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
 
               <button
                 disabled={status === 'skipped'}
-                onClick={() => setActiveMealComposer(dist.pasto)}
+                onClick={() => setActiveMealComposer(pasto)}
                 className="btn-componi-pasto w-full h-14 md:h-16 text-white font-black text-lg md:text-xl uppercase tracking-widest rounded-b-xl md:rounded-b-[2.5rem] disabled:opacity-50 touch-manipulation flex items-center justify-center"
               >
                 Componi Pasto

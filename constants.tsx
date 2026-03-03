@@ -1,38 +1,72 @@
 
-import { Alimento, TipologiaGiornataConfig, NomePasto } from './types';
+import { Alimento, TipologiaGiornataConfig, NomePasto, AlimentoCategoria } from './types';
 
-export const INITIAL_ALIMENTI: Alimento[] = [
-  { id: '1', nome: 'Riso cotto', per100g: { carboidrati: 28, proteine: 2.7, grassi: 0.3, kcal: 130 } },
-  { id: '2', nome: 'Riso crudo', per100g: { carboidrati: 80, proteine: 7, grassi: 0.6, kcal: 365 } },
-  { id: '3', nome: 'Petto di pollo cotto', per100g: { carboidrati: 0, proteine: 31, grassi: 3.6, kcal: 165 } },
-  { id: '4', nome: 'Petto di pollo crudo', per100g: { carboidrati: 0, proteine: 23, grassi: 1.2, kcal: 110 } },
-  { id: '5', nome: 'Pasta di riso cotta', per100g: { carboidrati: 25, proteine: 2.5, grassi: 0.5, kcal: 120 } },
-  { id: '6', nome: 'Pasta di riso cruda', per100g: { carboidrati: 78, proteine: 7, grassi: 1.5, kcal: 360 } },
-  { id: '7', nome: 'Pasta bianca cotta', per100g: { carboidrati: 31, proteine: 5, grassi: 0.9, kcal: 158 } },
-  { id: '8', nome: 'Pasta bianca cruda', per100g: { carboidrati: 75, proteine: 13, grassi: 1.5, kcal: 371 } },
-  { id: '9', nome: 'Pane bianco', per100g: { carboidrati: 49, proteine: 8, grassi: 3.2, kcal: 265 } },
-  { id: '10', nome: 'Tonno al naturale', per100g: { carboidrati: 0, proteine: 26, grassi: 0.6, kcal: 116 } },
-  { id: '11', nome: 'Tonno all\'olio sgocciolato', per100g: { carboidrati: 0, proteine: 25, grassi: 10, kcal: 200 } },
-  { id: '12', nome: 'Salmone affumicato', per100g: { carboidrati: 0, proteine: 18, grassi: 4, kcal: 117 } },
-  { id: '13', nome: 'Salmone sott\'olio', per100g: { carboidrati: 0, proteine: 20, grassi: 12, kcal: 200 } },
-  { id: '14', nome: 'Proteine in polvere (whey)', per100g: { carboidrati: 5, proteine: 80, grassi: 3, kcal: 370 } },
-  { id: '15', nome: 'Cereali Kellogg\'s Special K', per100g: { carboidrati: 76, proteine: 14, grassi: 1.5, kcal: 375 } },
-  { id: '16', nome: 'Risetti Choco Pops', per100g: { carboidrati: 84, proteine: 6, grassi: 1, kcal: 375 } },
-  { id: '17', nome: 'Burro di arachidi', per100g: { carboidrati: 20, proteine: 25, grassi: 50, kcal: 620 } },
-  { id: '18', nome: 'Merluzzo', per100g: { carboidrati: 0, proteine: 17, grassi: 0.3, kcal: 82 } },
-  { id: '19', nome: 'Olio EVO', per100g: { carboidrati: 0, proteine: 0, grassi: 100, kcal: 900 } },
-  { id: '20', nome: 'Burro', per100g: { carboidrati: 0, proteine: 0.5, grassi: 83, kcal: 750 } },
-  { id: '21', nome: 'Latte Alpro (soia)', per100g: { carboidrati: 0.5, proteine: 3, grassi: 1.8, kcal: 35 } },
-  { id: '22', nome: 'Yogurt greco 2% grassi', per100g: { carboidrati: 4, proteine: 9, grassi: 2, kcal: 73 } },
-  { id: '23', nome: 'Cioccolata fondente 70%', per100g: { carboidrati: 45, proteine: 8, grassi: 35, kcal: 550 } },
-  { id: '24', nome: 'Uova (intere)', per100g: { carboidrati: 1, proteine: 13, grassi: 11, kcal: 155 } },
-  { id: '25', nome: 'Tofu', per100g: { carboidrati: 2, proteine: 8, grassi: 4.8, kcal: 76 } },
-  { id: '26', nome: 'Farina di avena', per100g: { carboidrati: 60, proteine: 13, grassi: 7, kcal: 370 } },
-  { id: '27', nome: 'Farina di mandorle', per100g: { carboidrati: 10, proteine: 21, grassi: 50, kcal: 600 } },
-  { id: '28', nome: 'Macinato di manzo magro', per100g: { carboidrati: 0, proteine: 20, grassi: 5, kcal: 130 } },
-  { id: '29', nome: 'Sgombro sott\'olio sgocciolato', per100g: { carboidrati: 0, proteine: 19, grassi: 11, kcal: 180 } },
-  { id: '30', nome: 'Insalata di mare', per100g: { carboidrati: 3, proteine: 12, grassi: 1, kcal: 70 } },
+// Importa alimenti da CSV
+import alimentiCsv from './alimenti.csv?raw';
+
+function parseCSVRow(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      inQuotes = !inQuotes;
+    } else if (c === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += c;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+/** Mappa nome alimento (contains) -> categoria per generatore settimanale */
+const CATEGORIA_BY_NOME: { pattern: RegExp | string; cat: AlimentoCategoria }[] = [
+  { pattern: /salmone|spigola|merluzzo|nasello|tonno|pesce spada/i, cat: 'Pesce' },
+  { pattern: /bovino|filetto.*bovino|vitello|bresaola/i, cat: 'Carne Rossa' },
+  { pattern: /petto.*pollo|petto.*tacchino|fesa.*tacchino/i, cat: 'Carne Bianca' },
+  { pattern: /riso basmati|pasta|pane di segale|gallette di riso|fette biscottate|farina d'?avena|corn flakes|patate|risetti/i, cat: 'Carbo' },
+  { pattern: /yogurt greco 0%|albume|proteine isolate|olio.*oliva|burro di arachidi|cioccolato fondente 90%|nocciole|parmigiano|latte di mandorla/i, cat: 'Grassi/Pro' },
 ];
+
+function getCategoriaForAlimento(nome: string): AlimentoCategoria | undefined {
+  for (const { pattern, cat } of CATEGORIA_BY_NOME) {
+    if (typeof pattern === 'string' ? nome.toLowerCase().includes(pattern.toLowerCase()) : pattern.test(nome)) {
+      return cat;
+    }
+  }
+  return undefined;
+}
+
+function parseAlimentiCSV(csv: string): Alimento[] {
+  const lines = csv.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+  const rows = lines.slice(1).map(parseCSVRow);
+  return rows
+    .filter(row => row.length >= 6)
+    .map(row => {
+      const nome = row[1];
+      return {
+        id: row[0],
+        nome,
+        per100g: {
+          carboidrati: parseFloat(row[2]) || 0,
+          proteine: parseFloat(row[3]) || 0,
+          grassi: parseFloat(row[4]) || 0,
+          kcal: parseFloat(row[5]) || 0,
+        },
+        categoria: getCategoriaForAlimento(nome),
+      };
+    });
+}
+
+export const INITIAL_ALIMENTI: Alimento[] = parseAlimentiCSV(alimentiCsv);
+
+/** ID degli alimenti certificati AB Nutrition (solo lettura, no edit/delete) */
+export const CERTIFIED_ALIMENTO_IDS = new Set(INITIAL_ALIMENTI.map(a => a.id));
 
 export const PASTI_4: NomePasto[] = ['colazione', 'pranzo', 'merenda', 'cena'];
 export const PASTI_5: NomePasto[] = ['colazione', 'spuntino', 'pranzo', 'merenda', 'cena'];

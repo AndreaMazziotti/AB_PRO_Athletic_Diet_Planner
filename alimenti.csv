@@ -1,0 +1,49 @@
+id,nome,carboidrati,proteine,grassi,kcal
+1,Yogurt Greco 0% (crudo),4,10,0,57
+2,Latte di mandorla Alpro 0 zuccheri,0.1,0.5,1.1,13
+3,Pane di Segale,45,8,2,236
+4,Uova di Gallina Intero (crudo),0.6,12.4,10.3,143
+5,Bresaola,0.5,32,1.8,151
+6,Olio di Oliva Extravergine,0,0,99.9,899
+7,Riso Basmati crudo,78,7.5,0.7,358
+8,Riso Basmati cotto,25,2.5,0.2,120
+9,Petto di Pollo/Tacchino crudo,0,23.3,0.8,100
+10,Petto di Pollo/Tacchino cotto,0,31,3.6,165
+11,Vitello Filetto crudo,0,20.7,2.7,107
+12,Vitello Filetto cotto,0,29.5,3.8,152
+13,Parmigiano Reggiano,0,32,28,392
+14,Anacardi,27.5,15.3,46.4,596
+15,Pasta Integrale cruda,63.5,13,2.5,330
+16,Pasta Integrale cotta,24,5,0.8,122
+17,Tonno al Naturale in scatola,0,25,1,108
+18,Farina d'Avena,60,13,7,370
+19,Albume crudo,0.7,10.8,0.2,48
+20,Albume cotto,0.5,11.5,0.2,49
+21,Burro di Arachidi,20,25,50,620
+22,Burro,0,0.7,83,750
+23,Nocciole secche,6.1,14.2,63.5,656
+24,Mandorle,7.2,21.3,53.5,601
+25,Gallette di Riso,84,7.8,1.0,377
+26,Bovino Adulto Filetto crudo,0,20.6,3.2,113
+27,Bovino Adulto Filetto cotto,0,28.5,4.5,154
+28,Fesa di Tacchino cruda,0,23.5,1.2,107
+29,Fesa di Tacchino cotta,0,29,2.5,139
+30,Proteine Isolate (whey),3,80,3,370
+31,Kellogg's Corn Flakes,84,7,0.9,378
+32,Cioccolato Fondente 90%,13.5,10.2,55,613
+33,Merluzzo/Nasello surgelato crudo,0,16.5,0.5,72
+34,Merluzzo/Nasello cotto,0,22.5,0.8,97
+35,Salmone Affumicato,0,18.4,4.3,117
+36,Spigola cruda,0,16.5,2.8,94
+37,Spigola cotta,0,22,3.5,120
+38,Pesce Spada crudo,0,19.8,2.9,107
+39,Pesce Spada cotto,0,26,3.8,138
+40,Pasta bianca cruda,75,13,1.5,371
+41,Pasta bianca cotta,31,5,0.9,158
+42,Fette Biscottate,77,9,5,398
+43,Pane bianco,49,8,3.2,265
+44,Patate crude,16,2,0.1,72
+45,Patate lesse/bollite,20,1.7,0.1,86
+46,Kellogg's Risetti,84,6,1,375
+47,Yogurt Greco 2%,4,9,2,73
+48,Yogurt Greco 10%,4,8,10,138

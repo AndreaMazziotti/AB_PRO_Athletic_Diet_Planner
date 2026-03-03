@@ -189,12 +189,12 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
     <div className="composer-main max-w-3xl mx-auto bg-[var(--background-secondary)] rounded-xl sm:rounded-2xl border border-[var(--border-color)] shadow-xl overflow-hidden">
       <div className="px-2.5 py-3 sm:px-6 sm:py-4 bg-brand-primary text-white flex justify-between items-center">
         <h2 className="text-lg sm:text-2xl font-black uppercase tracking-tight">{pastoLabel}</h2>
-        <button onClick={onCancel} className="bg-white/20 hover:bg-white/40 text-white w-9 h-9 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-xl sm:text-2xl transition-colors" aria-label="Chiudi">&times;</button>
+        <button onClick={onCancel} className="composer-close-btn w-9 h-9 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-xl sm:text-2xl transition-colors" aria-label="Chiudi">&times;</button>
       </div>
 
       <div className="composer-content px-2.5 sm:px-4 md:px-6 py-3 sm:py-5 space-y-3 sm:space-y-4 composer-safe-bottom">
         {/* Obiettivo e totali – griglia 2x2 / riga compatta, label 10px, numero/target in evidenza */}
-        <div className="composer-card p-2.5 sm:p-3 bg-gray-900 dark:bg-black text-white rounded-lg sm:rounded-xl border border-[var(--border-color)]">
+        <div className="composer-card p-2.5 sm:p-3 bg-[var(--bg-elevated)] text-[var(--text-primary)] rounded-lg sm:rounded-xl border border-[var(--border-color)]">
           <div className="grid grid-cols-4 gap-1 sm:gap-1.5">
             <UnifiedStat label="KCAL" actual={Math.round(totals.kcal)} target={target.kcal} diff={diffs.kcal} unit="" highlight />
             <UnifiedStat label="CARBS" actual={Math.round(totals.carboidrati)} target={target.carboidrati} diff={diffs.carboidrati} unit="g" />
@@ -210,7 +210,7 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
               type="button"
               onClick={() => runSolver({})}
               disabled={solverLoading}
-              className="composer-btn-auto w-full py-3 sm:py-3.5 px-3 rounded-lg font-semibold text-white text-sm flex items-center justify-center gap-2 relative overflow-hidden disabled:opacity-80"
+              className="composer-btn-auto w-full py-3 sm:py-3.5 px-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 relative overflow-hidden disabled:opacity-80"
             >
               {solverLoading ? (
                 <>
@@ -227,8 +227,8 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
             </button>
           ) : (
             <>
-              <button type="button" disabled className="composer-btn-disabled w-full py-3 sm:py-3.5 px-3 rounded-lg font-semibold text-gray-500 text-sm flex items-center justify-center gap-2 cursor-not-allowed" aria-disabled>
-                <MagicWandIcon className="w-4 h-4 shrink-0 opacity-50" />
+              <button type="button" disabled className="composer-btn-disabled w-full py-3 sm:py-3.5 px-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 cursor-not-allowed" aria-disabled>
+                <MagicWandIcon className="composer-btn-disabled-icon w-4 h-4 shrink-0" />
                 Componi automaticamente
               </button>
               <p className="text-[10px] text-[var(--text-secondary)] mt-1.5 text-center">Aggiungi almeno 3 ingredienti per attivare</p>
@@ -327,7 +327,7 @@ const MealComposer: React.FC<MealComposerProps> = ({ target, pastoLabel, aliment
                       type="number"
                       value={item.quantita}
                       onChange={(e) => updateQuantita(idx, parseFloat(e.target.value) || 0)}
-                      className={`min-w-[3.5rem] w-16 rounded-md px-1.5 py-1 text-center text-xs font-bold tabular-nums outline-none border border-transparent focus:border-brand-primary bg-[var(--background-secondary)] text-[var(--text-primary)] [&::-webkit-inner-spin-button]:opacity-100 ${isPinned ? 'text-brand-primary' : ''}`}
+                      className={`composer-gram-input min-w-[3.5rem] w-16 rounded-md px-1.5 py-1 text-center text-xs font-bold tabular-nums outline-none focus:border-brand-primary bg-[var(--background-secondary)] text-[var(--text-primary)] ${isPinned ? 'text-brand-primary' : ''}`}
                     />
                     <button onClick={() => removeAlimento(idx)} className="composer-remove-btn shrink-0 w-7 h-7 flex items-center justify-center text-rose-500 hover:bg-rose-500/10 rounded transition-colors text-sm font-light" aria-label="Rimuovi">×</button>
                   </div>
@@ -440,7 +440,7 @@ const SolverPreviewModal: React.FC<SolverPreviewModalProps> = ({ result, onClose
             </div>
             <div className="h-3 bg-[var(--background-main)] rounded-full overflow-hidden">
               <div
-                className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-brand-primary to-[#7C3AED]"
+                className="h-full rounded-full transition-all duration-500 bg-brand-primary"
                 style={{ width: `${Math.min(100, score)}%` }}
               />
             </div>
@@ -457,7 +457,7 @@ const SolverPreviewModal: React.FC<SolverPreviewModalProps> = ({ result, onClose
             <button
               type="button"
               onClick={() => onAddSuggestion(missingMacro)}
-              className="w-full mb-4 py-3 px-4 rounded-2xl border-2 border-[#7C3AED] bg-[#7C3AED]/10 text-[#7C3AED] font-bold flex items-center justify-center gap-2 hover:bg-[#7C3AED]/20 transition-colors"
+              className="w-full mb-4 py-3 px-4 rounded-2xl border-2 border-brand-primary bg-brand-primary/10 text-brand-primary font-bold flex items-center justify-center gap-2 hover:bg-brand-primary/20 transition-colors"
             >
               <MagicWandIcon className="w-5 h-5" />
               {SUGGESTION_LABELS[missingMacro]}
@@ -477,7 +477,7 @@ const SolverPreviewModal: React.FC<SolverPreviewModalProps> = ({ result, onClose
               </li>
             ))}
           </ul>
-          <div className="mt-4 p-4 bg-gray-900 rounded-2xl text-white text-sm">
+          <div className="mt-4 p-4 bg-[var(--bg-elevated)] rounded-2xl text-[var(--text-primary)] text-sm">
             <div className="flex justify-between font-bold">
               <span>Totale</span>
               <span>{Math.round(actual.kcal)} kcal · C {Math.round(actual.carboidrati)} · P {Math.round(actual.proteine)} · G {Math.round(actual.grassi)}</span>
@@ -517,16 +517,15 @@ const UnifiedStat: React.FC<{
 }> = ({ label, actual, target, diff, unit, highlight }) => {
   const isOk = Math.abs(diff) < (unit ? 5 : 15);
   const isOverTarget = target > 0 && actual > target * OVER_TARGET_THRESHOLD;
-  const diffColor = diff > 0 ? 'text-rose-400' : 'text-emerald-400';
   const diffLabel = unit ? `${diff > 0 ? '+' : ''}${Math.round(diff)}${unit}` : `${diff > 0 ? '+' : ''}${Math.round(diff)} kcal`;
   return (
-    <div className={`flex flex-col items-center justify-center min-w-0 py-1 px-0.5 rounded-md ${highlight ? 'bg-brand-primary/90 text-white' : 'bg-white/5'}`}>
-      <span className="text-[9px] font-medium opacity-50 uppercase tracking-wider">{label}</span>
-      <div className="text-xs sm:text-sm font-bold tabular-nums mt-0.5 leading-tight">
-        <span style={isOverTarget && !highlight ? { color: 'var(--brand-primary)' } : undefined}>{actual}</span>
-        <span className="text-[9px] font-normal opacity-60"> / {target}{unit ? unit : ''}</span>
+    <div className={`flex flex-col items-center justify-center min-w-0 py-1 px-0.5 rounded-md ${highlight ? 'composer-stat-kcal' : 'composer-stat-cell'}`}>
+      <span className={highlight ? 'composer-stat-kcal-label text-white' : 'composer-stat-cell-label'} style={highlight ? { color: '#FFFFFF' } : undefined}>{label}</span>
+      <div className={`text-xs sm:text-sm font-bold tabular-nums mt-0.5 leading-tight ${highlight ? 'composer-stat-kcal-values' : ''}`} style={highlight ? { color: '#FFFFFF' } : undefined}>
+        <span style={highlight ? { color: '#FFFFFF' } : isOverTarget ? { color: 'var(--brand-primary)' } : undefined}>{actual}</span>
+        <span className={highlight ? 'composer-stat-kcal-target' : 'text-[9px] font-normal opacity-60'} style={highlight ? { color: '#FFFFFF' } : undefined}> / {target}{unit ? unit : ''}</span>
       </div>
-      <span className={`text-[8px] font-semibold mt-0.5 ${isOk ? 'text-emerald-400' : diffColor}`}>{diffLabel}</span>
+      <span className="text-[8px] font-semibold mt-0.5 composer-stat-diff" style={highlight ? { color: '#FFFFFF' } : { color: isOk ? 'var(--diff-ok)' : 'var(--diff-over)' }}>{diffLabel}</span>
     </div>
   );
 };
