@@ -64,7 +64,12 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
       const newWeeks = [...prev];
       const target = { ...newWeeks[index][type] };
       target.calorieTotal = value;
-      target.macros = calculateMacrosFromPercentages(target.calorieTotal, 40, 30, 30);
+      target.macros = calculateMacrosFromPercentages(
+        target.calorieTotal,
+        type === 'giorniON' ? 40 : 30,
+        type === 'giorniON' ? 30 : 35,
+        type === 'giorniON' ? 30 : 35
+      );
       newWeeks[index][type] = target;
       return newWeeks;
     });
@@ -264,6 +269,9 @@ const SetupWizard: React.FC<SetupWizardProps> = ({ onComplete, initialWeeks, ini
   return null;
 };
 
+const KCAL_MIN = 1200;
+const KCAL_MAX = 6000;
+
 const WeekSetupCard: React.FC<{
   type: 'on' | 'off';
   value: number;
@@ -273,6 +281,17 @@ const WeekSetupCard: React.FC<{
 }> = ({ type, value, macros, onKcalChange, onMacroChange }) => {
   const isOn = type === 'on';
   const title = isOn ? 'GIORNI ON' : 'GIORNI OFF';
+  const defaultKcal = isOn ? 2500 : 2000;
+  const [kcalStr, setKcalStr] = React.useState(String(value));
+
+  React.useEffect(() => setKcalStr(String(value)), [value]);
+
+  const commitKcal = () => {
+    const n = parseInt(kcalStr, 10);
+    const clamped = isNaN(n) ? defaultKcal : Math.max(KCAL_MIN, Math.min(KCAL_MAX, n));
+    onKcalChange(clamped);
+    setKcalStr(String(clamped));
+  };
 
   return (
     <div className="p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] bg-[var(--background-secondary)] border border-[var(--border-color)]">
@@ -287,8 +306,17 @@ const WeekSetupCard: React.FC<{
       <div className="space-y-4 md:space-y-5">
         <div>
           <label className="block text-[10px] font-bold uppercase mb-1.5 tracking-wider text-[var(--text-secondary)]">Calorie totali</label>
-          <div className="w-full setup-kcal-box rounded-xl md:rounded-2xl px-4 py-3 md:py-4 flex items-baseline gap-1">
-            <span className="text-xl md:text-2xl font-bold text-[var(--text-primary)] tabular-nums">{Math.round(value)}</span>
+          <div className="flex items-baseline gap-2">
+            <input
+              type="number"
+              inputMode="numeric"
+              value={kcalStr}
+              onChange={(e) => setKcalStr(e.target.value)}
+              onBlur={commitKcal}
+              min={KCAL_MIN}
+              max={KCAL_MAX}
+              className="setup-kcal-box flex-1 max-w-[140px] rounded-xl md:rounded-2xl px-4 py-3 md:py-4 font-bold text-xl md:text-2xl text-[var(--text-primary)] border border-[var(--border-color)] bg-[var(--background-main)] outline-none focus:border-brand-primary transition-colors"
+            />
             <span className="text-[10px] font-medium text-[var(--text-secondary)]">kcal</span>
           </div>
         </div>
