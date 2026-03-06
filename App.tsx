@@ -116,10 +116,10 @@ const App: React.FC = () => {
     });
   };
 
-  const handleGenerateWeekPlan = () => {
+  const handleGenerateWeekPlan = (startDate: string) => {
     const { alimenti, facilePreferences, easy_mode_targets, manualDayTypeOverrides, tipologie } = state;
     if (state.setupMode !== 'facile' || !facilePreferences || !easy_mode_targets) return;
-    const generated = generateRemainingWeek(alimenti, facilePreferences, easy_mode_targets, manualDayTypeOverrides, state.tipologie);
+    const generated = generateRemainingWeek(alimenti, facilePreferences, easy_mode_targets, manualDayTypeOverrides, state.tipologie, startDate);
     const genKeys = new Set(generated.map(p => `${p.data}|${p.nomePasto}`));
     const filtered = state.pastiSalvati.filter(p => !genKeys.has(`${p.data}|${p.nomePasto}`));
     const newPasti = [...filtered, ...generated];

@@ -15,11 +15,19 @@ const MACRO_TOLERANCE_G = 1;  // +/- 1g per macro
 const KCAL_TOLERANCE = 5;     // +/- 5 kcal
 
 /** Modelli Colazione/Spuntino: array di nome parziale per risolvere ID da alimenti */
-export const MEAL_MODELS_BREAKFAST: { id: string; foodPatterns: string[] }[] = [
+export const MEAL_MODELS_BREAKFAST: {
+  id: string;
+  foodPatterns: string[];
+  minPortions?: { pattern: string; grams: number }[];
+}[] = [
   { id: 'T1', foodPatterns: ['Yogurt Greco 0%', 'Fette Biscottate', 'Burro di Arachidi'] },
   { id: 'T2', foodPatterns: ['Albume', 'Farina d\'Avena', 'Cioccolato Fondente 90%'] },
   { id: 'T3', foodPatterns: ['Proteine Isolate', 'Corn Flakes', 'Latte di mandorla', 'Nocciole'] },
   { id: 'T4', foodPatterns: ['Pane di Segale', 'Bresaola', 'Olio di Oliva'] },
+  { id: 'T5', foodPatterns: ['Latte di mandorla', 'Proteine Isolate', 'Corn Flakes', 'Burro di Arachidi'], minPortions: [{ pattern: 'Latte di mandorla', grams: 150 }] },
+  { id: 'T6', foodPatterns: ['Latte di mandorla', 'Proteine Isolate', 'Risetti', 'Burro di Arachidi'], minPortions: [{ pattern: 'Latte di mandorla', grams: 150 }] },
+  { id: 'T7', foodPatterns: ['Yogurt Greco 0%', 'Corn Flakes', 'Proteine Isolate', 'Burro di Arachidi'] },
+  { id: 'T8', foodPatterns: ['Yogurt Greco 0%', 'Risetti', 'Proteine Isolate', 'Burro di Arachidi'] },
 ];
 
 /** Modelli Pranzo/Cena: pattern per risolvere alimenti (primo = proteina, secondo = carbo, terzo = condimento/extra) */
@@ -58,6 +66,25 @@ function resolveBreakfastModel(
   return resolved;
 }
 
+/** Applica porzioni minime (es. latte 150g per miscelare whey) agli items */
+function applyMinPortions(
+  items: AlimentoSelezionato[],
+  alimenti: Alimento[],
+  minPortions: { pattern: string; grams: number }[]
+): AlimentoSelezionato[] {
+  const result = [...items];
+  for (const { pattern, grams } of minPortions) {
+    const idx = result.findIndex(r => {
+      const a = alimenti.find(x => x.id === r.alimentoId);
+      return a && a.nome.toLowerCase().includes(pattern.toLowerCase());
+    });
+    if (idx >= 0 && result[idx].quantita < grams) {
+      result[idx] = { ...result[idx], quantita: grams };
+    }
+  }
+  return result;
+}
+
 /** Restituisce gli alimenti per un modello pranzo/cena */
 function resolveMainModel(
   alimenti: Alimento[],
@@ -84,6 +111,18 @@ export function getDatesTodayToSunday(): string[] {
   const dayOfWeek = start.getDay(); // 0 = Domenica, 6 = Sabato
   const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
   for (let d = 0; d <= daysUntilSunday; d++) {
+    const dte = new Date(start);
+    dte.setDate(start.getDate() + d);
+    dates.push(dte.toISOString().split('T')[0]);
+  }
+  return dates;
+}
+
+/** Calcola N giorni consecutivi a partire dalla data indicata (formato YYYY-MM-DD) */
+export function getDatesFromStart(startDate: string, numDays: number): string[] {
+  const dates: string[] = [];
+  const start = new Date(startDate + 'T12:00:00');
+  for (let d = 0; d < numDays; d++) {
     const dte = new Date(start);
     dte.setDate(start.getDate() + d);
     dates.push(dte.toISOString().split('T')[0]);
@@ -160,9 +199,19 @@ function calculateAutomaticGrams(
   foods: Alimento[],
   target: { kcal: number; carboidrati: number; proteine: number; grassi: number }
 ): AlimentoSelezionato[] {
-  const proteinSource = foods.find(a => classifyAlimento(a) === 'protein');
-  const fatSource = foods.find(a => classifyAlimento(a) === 'fat');
-  const carbSource = foods.find(a => classifyAlimento(a) === 'carb');
+  // Preferisci fonti con densità maggiore: evita latte/cibi acquosi come fonte principale
+  const proteins = foods.filter(a => classifyAlimento(a) === 'protein');
+  const fats = foods.filter(a => classifyAlimento(a) === 'fat');
+  const carbs = foods.filter(a => classifyAlimento(a) === 'carb');
+  const proteinSource = proteins.length > 0
+    ? proteins.reduce((best, a) => (a.per100g.proteine > (best?.per100g.proteine ?? 0) ? a : best))
+    : undefined;
+  const fatSource = fats.length > 0
+    ? fats.reduce((best, a) => (a.per100g.grassi > (best?.per100g.grassi ?? 0) ? a : best))
+    : undefined;
+  const carbSource = carbs.length > 0
+    ? carbs.reduce((best, a) => (a.per100g.carboidrati > (best?.per100g.carboidrati ?? 0) ? a : best))
+    : undefined;
   const usedIds = new Set([proteinSource, fatSource, carbSource].filter(Boolean).map(a => a!.id));
   const extras = foods.filter(a => !usedIds.has(a.id));
 
@@ -256,7 +305,7 @@ function calculateAutomaticGrams(
 }
 
 /**
- * Genera i pasti dal giorno corrente alla domenica.
+ * Genera i pasti per i 7 giorni a partire dalla data indicata.
  * Varietà: se 4+ giorni, forza almeno 2 PESCE e 2 ROSSA su pranzo/cena.
  */
 export function generateRemainingWeek(
@@ -264,9 +313,10 @@ export function generateRemainingWeek(
   prefs: FacileSetupPreferences,
   targets: EasyModeTargets,
   manualOverrides?: Record<string, 'ON' | 'OFF'>,
-  tipologie?: TipologiaGiornataConfig[]
+  tipologie?: TipologiaGiornataConfig[],
+  startDate?: string
 ): PastoComposto[] {
-  const dates = getDatesTodayToSunday();
+  const dates = startDate ? getDatesFromStart(startDate, 7) : getDatesTodayToSunday();
   const meals = prefs.mealFrequency === 5 ? [...PASTI_5] : [...PASTI_4];
   const results: PastoComposto[] = [];
   const numDays = dates.length;
@@ -338,13 +388,18 @@ export function generateRemainingWeek(
 
       if (resolvedAlimenti.length === 0) continue;
 
-      const items = calculateAutomaticGrams(resolvedAlimenti, {
+      let items = calculateAutomaticGrams(resolvedAlimenti, {
         kcal: target.kcal,
         carboidrati: target.carboidrati,
         proteine: target.proteine,
         grassi: target.grassi,
       });
       if (items.length === 0) continue;
+
+      const breakfastModel = isBreakfastMeal(mealName) ? MEAL_MODELS_BREAKFAST[(breakfastIdx - 1) % MEAL_MODELS_BREAKFAST.length] : null;
+      if (breakfastModel?.minPortions) {
+        items = applyMinPortions(items, alimenti, breakfastModel.minPortions);
+      }
 
       const pasto: PastoComposto = {
         id: `gen-${dateStr}-${mealName}-${Date.now()}`,

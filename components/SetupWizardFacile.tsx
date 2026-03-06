@@ -46,10 +46,15 @@ function buildTipologieFromFacile(prefs: FacileSetupPreferences): TipologiaGiorn
   return TIPOLOGIE_GIORNATA.filter(t => t.tipo === onTipo || t.tipo === offTipo);
 }
 
+const KCAL_MIN = 1200;
+const KCAL_MAX = 5000;
+
 const SetupWizardFacile: React.FC<SetupWizardFacileProps> = ({ onComplete }) => {
   const [step, setStep] = useState(1);
   const [kcalOn, setKcalOn] = useState(2500);
   const [kcalOff, setKcalOff] = useState(2000);
+  const [kcalOnStr, setKcalOnStr] = useState('2500');
+  const [kcalOffStr, setKcalOffStr] = useState('2000');
   const [mealFrequency, setMealFrequency] = useState<4 | 5>(4);
   const [trainingTiming, setTrainingTiming] = useState<'morning' | 'afternoon'>('afternoon');
   const [onDays, setOnDays] = useState<number[]>([1, 2, 3, 4, 5]); // Lun-Ven default
@@ -58,6 +63,20 @@ const SetupWizardFacile: React.FC<SetupWizardFacileProps> = ({ onComplete }) => 
     setOnDays(prev =>
       prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
     );
+  };
+
+  const commitKcalOn = (raw: string) => {
+    const n = parseInt(raw, 10);
+    const clamped = isNaN(n) ? 2500 : Math.max(KCAL_MIN, Math.min(KCAL_MAX, n));
+    setKcalOn(clamped);
+    setKcalOnStr(String(clamped));
+  };
+
+  const commitKcalOff = (raw: string) => {
+    const n = parseInt(raw, 10);
+    const clamped = isNaN(n) ? 2000 : Math.max(KCAL_MIN, Math.min(KCAL_MAX, n));
+    setKcalOff(clamped);
+    setKcalOffStr(String(clamped));
   };
 
   const prefs: FacileSetupPreferences = {
@@ -106,10 +125,12 @@ const SetupWizardFacile: React.FC<SetupWizardFacileProps> = ({ onComplete }) => 
                   <div className="flex items-baseline gap-2">
                     <input
                       type="number"
-                      value={kcalOn}
-                      onChange={(e) => setKcalOn(Math.max(1200, Math.min(5000, parseInt(e.target.value) || 2500)))}
-                      min={1200}
-                      max={5000}
+                      inputMode="numeric"
+                      value={kcalOnStr}
+                      onChange={(e) => setKcalOnStr(e.target.value)}
+                      onBlur={() => commitKcalOn(kcalOnStr)}
+                      min={KCAL_MIN}
+                      max={KCAL_MAX}
                       step={50}
                       className="setup-kcal-box w-full max-w-[160px] rounded-xl px-4 py-3 font-bold text-xl text-[var(--text-primary)] border border-[var(--border-color)] bg-[var(--background-main)]"
                     />
@@ -121,10 +142,12 @@ const SetupWizardFacile: React.FC<SetupWizardFacileProps> = ({ onComplete }) => 
                   <div className="flex items-baseline gap-2">
                     <input
                       type="number"
-                      value={kcalOff}
-                      onChange={(e) => setKcalOff(Math.max(1200, Math.min(5000, parseInt(e.target.value) || 2000)))}
-                      min={1200}
-                      max={5000}
+                      inputMode="numeric"
+                      value={kcalOffStr}
+                      onChange={(e) => setKcalOffStr(e.target.value)}
+                      onBlur={() => commitKcalOff(kcalOffStr)}
+                      min={KCAL_MIN}
+                      max={KCAL_MAX}
                       step={50}
                       className="setup-kcal-box w-full max-w-[160px] rounded-xl px-4 py-3 font-bold text-xl text-[var(--text-primary)] border border-[var(--border-color)] bg-[var(--background-main)]"
                     />
@@ -244,7 +267,13 @@ const SetupWizardFacile: React.FC<SetupWizardFacileProps> = ({ onComplete }) => 
         </button>
         {step < TOTAL_STEPS ? (
           <button
-            onClick={() => setStep(s => s + 1)}
+            onClick={() => {
+              if (step === 1) {
+                commitKcalOn(kcalOnStr);
+                commitKcalOff(kcalOffStr);
+              }
+              setStep(s => s + 1);
+            }}
             className="flex-1 py-3.5 md:py-4 bg-[var(--brand-primary)] text-white rounded-2xl font-bold hover:bg-[var(--brand-primary-hover)] shadow-lg transition-all uppercase tracking-wider text-xs md:text-sm"
             style={{ borderRadius: 16 }}
           >

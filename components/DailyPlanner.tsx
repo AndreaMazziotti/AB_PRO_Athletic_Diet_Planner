@@ -48,7 +48,7 @@ interface DailyPlannerProps {
   onDateChange: (date: string) => void;
   onSaveMeal: (date: string, week: number, type: string, meal: NomePasto, items: AlimentoSelezionato[], status?: PastoStatus) => void;
   onManualDayTypeChange?: (date: string, type: 'ON' | 'OFF') => void;
-  onGenerateWeekPlan?: () => void;
+  onGenerateWeekPlan?: (startDate: string) => void;
 }
 
 const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDateChange, onSaveMeal, onManualDayTypeChange, onGenerateWeekPlan }) => {
@@ -208,14 +208,14 @@ const DailyPlanner: React.FC<DailyPlannerProps> = ({ state, selectedDate, onDate
         <div className="box-control bg-[var(--background-secondary)] p-4 md:p-6 rounded-xl md:rounded-[2rem] flex flex-col items-center">
           <button
             type="button"
-            onClick={onGenerateWeekPlan}
+            onClick={() => onGenerateWeekPlan?.(selectedDate)}
             className="btn-genera-piano w-[90%] max-w-[400px] py-4 md:py-5 px-4 rounded-xl md:rounded-2xl bg-[var(--brand-primary)] text-white font-black text-[11px] sm:text-sm md:text-base uppercase tracking-[0.15em] md:tracking-widest shadow-lg hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-center"
             style={{ paddingLeft: 'max(1rem, env(safe-area-inset-left))', paddingRight: 'max(1rem, env(safe-area-inset-right))' }}
           >
             <span className="whitespace-nowrap">COSTRUISCI PIANO SETTIMANALE</span>
           </button>
           <p className="text-[10px] md:text-xs text-[var(--text-secondary)] mt-2 text-center font-medium">
-            Genera i pasti da oggi alla domenica con modelli certificati
+            Genera i pasti per i 7 giorni a partire dalla data selezionata
           </p>
         </div>
       )}
